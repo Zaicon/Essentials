@@ -64,7 +64,7 @@ namespace Essentials
 			#region Add Commands
 			Commands.ChatCommands.Add(new Command("essentials.more", CMDmore, "more"));
 			Commands.ChatCommands.Add(new Command(new List<string> { "essentials.position.get", "essentials.position.getother" }, CMDpos, "pos", "getpos"));
-			Commands.ChatCommands.Add(new Command("essentials.position.tp", CMDtppos, "tppos"));
+			//Commands.ChatCommands.Add(new Command("essentials.position.tp", CMDtppos, "tppos"));
 			Commands.ChatCommands.Add(new Command("essentials.position.ruler", CMDruler, "ruler"));
 			Commands.ChatCommands.Add(new Command("essentials.helpop.ask", CMDhelpop, "helpop"));
 			Commands.ChatCommands.Add(new Command("essentials.suicide", CMDsuicide, "suicide", "die"));
