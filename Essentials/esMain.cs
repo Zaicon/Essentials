@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using System.Text.RegularExpressions;
 using Terraria;
 using TerrariaApi.Server;
 using TShockAPI;
@@ -64,7 +65,6 @@ namespace Essentials
 			#region Add Commands
 			Commands.ChatCommands.Add(new Command("essentials.more", CMDmore, "more"));
 			Commands.ChatCommands.Add(new Command(new List<string> { "essentials.position.get", "essentials.position.getother" }, CMDpos, "pos", "getpos"));
-			//Commands.ChatCommands.Add(new Command("essentials.position.tp", CMDtppos, "tppos"));
 			Commands.ChatCommands.Add(new Command("essentials.position.ruler", CMDruler, "ruler"));
 			Commands.ChatCommands.Add(new Command("essentials.helpop.ask", CMDhelpop, "helpop"));
 			Commands.ChatCommands.Add(new Command("essentials.suicide", CMDsuicide, "suicide", "die"));
@@ -72,9 +72,6 @@ namespace Essentials
 			Commands.ChatCommands.Add(new Command("essentials.kickall.kick", CMDkickall, "kickall"));
 			Commands.ChatCommands.Add(new Command("essentials.moon", CMDmoon, "moon"));
 			Commands.ChatCommands.Add(new Command(new List<string> { "essentials.back.tp", "essentials.back.death" }, CMDback, "b"));
-			Commands.ChatCommands.Add(new Command("essentials.ids.search", CMDsitems, "sitem", "si", "searchitem"));
-			Commands.ChatCommands.Add(new Command("essentials.ids.search", CMDspage, "spage", "sp"));
-			Commands.ChatCommands.Add(new Command("essentials.ids.search", CMDsnpcs, "snpc", "sn", "searchnpc"));
 			Commands.ChatCommands.Add(new Command("essentials.home", CMDsethome, "sethome"));
 			Commands.ChatCommands.Add(new Command("essentials.home", CMDmyhome, "myhome"));
 			Commands.ChatCommands.Add(new Command("essentials.home", CMDdelhome, "delhome"));
@@ -88,17 +85,14 @@ namespace Essentials
 			Commands.ChatCommands.Add(new Command("essentials.level.down", CMDdown, "down"));
 			Commands.ChatCommands.Add(new Command("essentials.level.side", CMDleft, "left"));
 			Commands.ChatCommands.Add(new Command("essentials.level.side", CMDright, "right"));
-			Commands.ChatCommands.Add(new Command(new List<string> { "essentials.playertime.set", "essentials.playertime.setother" }, CMDptime, "ptime"));
 			Commands.ChatCommands.Add(new Command("essentials.ping", CMDping, "ping", "pong", "echo"));
 			Commands.ChatCommands.Add(new Command("essentials.sudo", CMDsudo, "sudo"));
-			Commands.ChatCommands.Add(new Command("essentials.socialspy", CMDsocialspy, "socialspy"));
 			Commands.ChatCommands.Add(new Command("essentials.near", CMDnear, "near"));
-			Commands.ChatCommands.Add(new Command(new List<string> { "essentials.nick.set", "essentials.nick.setother" }, CMDnick, "nick"));
-			Commands.ChatCommands.Add(new Command("essentials.realname", CMDrealname, "realname"));
 			Commands.ChatCommands.Add(new Command("essentials.exacttime", CMDetime, "etime", "exacttime"));
 			Commands.ChatCommands.Add(new Command("essentials.forcelogin", CMDforcelogin, "forcelogin"));
 			Commands.ChatCommands.Add(new Command("essentials.inventory.see", CMDinvsee, "invsee"));
 			Commands.ChatCommands.Add(new Command("essentials.whois", CMDwhois, "whois"));
+            Commands.ChatCommands.Add(new Command("essentials.ids.search", ESFind, "sitem", "si", "searchitem", "find", "snpc", "sn", "searchnpc"));
 			#endregion
 
 			SavePath = Path.Combine(TShock.SavePath, "Essentials");
@@ -744,6 +738,169 @@ namespace Essentials
 			ePly.LastSearchResults = Results;
 			esUtils.DisplaySearchResults(args.Player, Results, 1);
 		}
+
+        private void ESFind(CommandArgs args)
+        {
+            var regex = new Regex(@"^\w+ -(\w+) (.+?) ?(\d*)$");
+            Match match = regex.Match(args.Message);
+            if (!match.Success)
+            {
+                args.Player.SendErrorMessage("Invalid syntax! Proper syntax: {0}find <-switch> <name...> [page]", TShock.Config.CommandSpecifier);
+                args.Player.SendSuccessMessage("Valid {0}find switches:", TShock.Config.CommandSpecifier);
+                args.Player.SendInfoMessage("-command: Finds a command.");
+                args.Player.SendInfoMessage("-item: Finds an item.");
+                args.Player.SendInfoMessage("-npc: Finds an NPC.");
+                args.Player.SendInfoMessage("-tile: Finds a tile.");
+                args.Player.SendInfoMessage("-wall: Finds a wall.");
+                return;
+            }
+
+            int page = 1;
+            if (!String.IsNullOrWhiteSpace(match.Groups[3].Value) && (!int.TryParse(match.Groups[3].Value, out page) || page <= 0))
+            {
+                args.Player.SendErrorMessage("Invalid page '{0}'!", match.Groups[3].Value);
+                return;
+            }
+
+            switch (match.Groups[1].Value.ToLowerInvariant())
+            {
+                #region Command
+                case "command":
+                    var commands = new List<string>();
+
+                    foreach (Command command in TShockAPI.Commands.ChatCommands.Where(c => c.Names.Any(s => s.ToLower().Contains(match.Groups[2].Value.ToLower()))))
+                        commands.Add(String.Format("{0} (Permission: {1})", command.Name, command.Permissions.FirstOrDefault()));
+
+                    PaginationTools.SendPage(args.Player, page, commands,
+                        new PaginationTools.Settings
+                        {
+                            HeaderFormat = "Found Commands ({0}/{1}):",
+                            FooterFormat = String.Format("Type /find -command {0} {{0}} for more", match.Groups[2].Value),
+                            NothingToDisplayString = "No commands were found."
+                        });
+                    return;
+                #endregion
+                #region Item
+                case "item":
+                    var items = new List<string>();
+
+                    
+                        for (int i = -48; i < 0; i++)
+                        {
+                            var item = new Item();
+                            item.netDefaults(i);
+                            if (item.name.ToLower().Contains(match.Groups[2].Value.ToLower()))
+                                items.Add(String.Format("{0} (ID: {1})", item.name, i));
+                        }
+                        for (int i = 0; i < Main.itemName.Length; i++)
+                        {
+                            if (Main.itemName[i].ToLower().Contains(match.Groups[2].Value.ToLower()))
+                                items.Add(String.Format("{0} (ID: {1})", Main.itemName[i], i));
+                        }
+
+                    PaginationTools.SendPage(args.Player, page, items,
+                        new PaginationTools.Settings
+                        {
+                            HeaderFormat = "Found Items ({0}/{1}):",
+                            FooterFormat = String.Format("Type /find -item {0} {{0}} for more", match.Groups[2].Value),
+                            NothingToDisplayString = "No items were found."
+                        });
+                    return;
+                #endregion
+                #region NPC
+                case "npc":
+                    var npcs = new List<string>();
+
+                        for (int i = -65; i < 0; i++)
+                        {
+                            var npc = new NPC();
+                            npc.netDefaults(i);
+                            if (npc.name.ToLower().Contains(match.Groups[2].Value.ToLower()))
+                                npcs.Add(String.Format("{0} (ID: {1})", npc.name, i));
+                        }
+                        for (int i = 0; i < Terraria.Main.npcName.Count(); i++)
+                        {
+                            if (Main.npcName[i].ToLower().Contains(match.Groups[2].Value.ToLower()))
+                                npcs.Add(String.Format("{0} (ID: {1})", Main.npcName[i], i));
+                        }
+
+                    PaginationTools.SendPage(args.Player, page, npcs,
+                        new PaginationTools.Settings
+                        {
+                            HeaderFormat = "Found NPCs ({0}/{1}):",
+                            FooterFormat = String.Format("Type /find -npc {0} {{0}} for more", match.Groups[2].Value),
+                            NothingToDisplayString = "No NPCs were found.",
+                        });
+                    return;
+                #endregion
+                #region Tile
+                case "tile":
+                    var tiles = new List<string>();
+
+                        foreach (FieldInfo fi in typeof(Terraria.ID.TileID).GetFields())
+                        {
+                            var sb = new StringBuilder();
+                            for (int i = 0; i < fi.Name.Length; i++)
+                            {
+                                if (Char.IsUpper(fi.Name[i]) && i > 0)
+                                    sb.Append(" ").Append(fi.Name[i]);
+                                else
+                                    sb.Append(fi.Name[i]);
+                            }
+
+                            string name = sb.ToString();
+                            if (name.ToLower().Contains(match.Groups[2].Value.ToLower()))
+                                tiles.Add(String.Format("{0} (ID: {1})", name, fi.GetValue(null)));
+                        }
+
+                    PaginationTools.SendPage(args.Player, page, tiles,
+                        new PaginationTools.Settings
+                        {
+                            HeaderFormat = "Found Tiles ({0}/{1}):",
+                            FooterFormat = String.Format("Type /find -tile {0} {{0}} for more", match.Groups[2].Value),
+                            NothingToDisplayString = "No tiles were found.",
+                        });
+                    return;
+                #endregion
+                #region Wall
+                case "wall":
+                    var walls = new List<string>();
+
+                        foreach (FieldInfo fi in typeof(Terraria.ID.WallID).GetFields())
+                        {
+                            var sb = new StringBuilder();
+                            for (int i = 0; i < fi.Name.Length; i++)
+                            {
+                                if (Char.IsUpper(fi.Name[i]) && i > 0)
+                                    sb.Append(" ").Append(fi.Name[i]);
+                                else
+                                    sb.Append(fi.Name[i]);
+                            }
+
+                            string name = sb.ToString();
+                            if (name.ToLower().Contains(match.Groups[2].Value.ToLower()))
+                                walls.Add(String.Format("{0} (ID: {1})", name, fi.GetValue(null)));
+                        }
+
+                    PaginationTools.SendPage(args.Player, page, walls,
+                        new PaginationTools.Settings
+                        {
+                            HeaderFormat = "Found Walls ({0}/{1}):",
+                            FooterFormat = String.Format("Type /find -wall {0} {{0}} for more", match.Groups[2].Value),
+                            NothingToDisplayString = "No walls were found.",
+                        });
+                    return;
+                #endregion
+                default:
+                    args.Player.SendSuccessMessage("Valid {0}find switches:", TShock.Config.CommandSpecifier);
+                    args.Player.SendInfoMessage("-command: Finds a command.");
+                    args.Player.SendInfoMessage("-item: Finds an item.");
+                    args.Player.SendInfoMessage("-npc: Finds an NPC.");
+                    args.Player.SendInfoMessage("-tile: Finds a tile.");
+                    args.Player.SendInfoMessage("-wall: Finds a wall.");
+                    return;
+            }
+        }
 		#endregion
 
 		#region MyHome
@@ -1575,7 +1732,7 @@ namespace Essentials
 				args.Player.SendErrorMessage("You cannot force {0} to do a command.", Ply.Name);
 				return;
 			}
-			Group OldGroup = null;
+			TShockAPI.Group OldGroup = null;
 			if (args.Player.Group.HasPermission("essentials.sudo.super"))
 			{
 				OldGroup = Ply.Group;
