@@ -355,6 +355,10 @@ namespace Essentials
 					{
 						continue;
 					}
+                    if (ePly.TSPlayer == null)
+                    {
+                        continue;
+                    }
 
 					if (!ePly.SavedBackAction && ePly.TSPlayer.Dead)
 					{
