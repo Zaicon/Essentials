@@ -542,7 +542,7 @@ namespace Essentials
 				args.Player.SendMessage("[HelpOp] There are no operators online to receive your message.", Color.MediumPurple);
 			else
 			{
-				string to = string.Join(", ", online);
+				string to = string.Join(", ", online.Select(p => p));
 				args.Player.SendMessage(string.Format("[HelpOp] Your message has been received by the operator(s): {0}", to), Color.MediumPurple);
 			}
 		}
