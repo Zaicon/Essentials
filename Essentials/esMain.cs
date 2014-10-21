@@ -92,7 +92,10 @@ namespace Essentials
 			Commands.ChatCommands.Add(new Command("essentials.forcelogin", CMDforcelogin, "forcelogin"));
 			Commands.ChatCommands.Add(new Command("essentials.inventory.see", CMDinvsee, "invsee"));
 			Commands.ChatCommands.Add(new Command("essentials.whois", CMDwhois, "whois"));
-            Commands.ChatCommands.Add(new Command("essentials.ids.search", ESFind, "sitem", "si", "searchitem", "find", "snpc", "sn", "searchnpc"));
+            Commands.ChatCommands.Add(new Command("essentials.ids.search", ESFind, "find"));
+            Commands.ChatCommands.Add(new Command("essentials.ids.search", CMDsitems, "sitem", "si", "searchitem"));
+            Commands.ChatCommands.Add(new Command("essentials.ids.search", CMDsnpcs, "snpc", "sn", "searchnpc"));
+
 			#endregion
 
 			SavePath = Path.Combine(TShock.SavePath, "Essentials");
@@ -699,6 +702,7 @@ namespace Essentials
 
 		private void CMDsitems(CommandArgs args)
 		{
+            /*
 			if (args.Parameters.Count < 1)
 			{
 				args.Player.SendErrorMessage("Usage: /sitem <search term>");
@@ -718,10 +722,14 @@ namespace Essentials
 
 			ePly.LastSearchResults = Results;
 			esUtils.DisplaySearchResults(args.Player, Results, 1);
+            */
+
+            Commands.HandleCommand(args.Player, "/find -item " + string.Join(" ", args.Parameters.Select(p => p)));
 		}
 
 		private void CMDsnpcs(CommandArgs args)
 		{
+            /*
 			if (args.Parameters.Count < 1)
 			{
 				args.Player.SendErrorMessage("Usage: /snpc <search term>");
@@ -741,6 +749,9 @@ namespace Essentials
 
 			ePly.LastSearchResults = Results;
 			esUtils.DisplaySearchResults(args.Player, Results, 1);
+            */
+
+            Commands.HandleCommand(args.Player, "/find -npc " + string.Join(" ", args.Parameters.Select(p => p)));
 		}
 
         private void ESFind(CommandArgs args)
