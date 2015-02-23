@@ -43,13 +43,13 @@ namespace Essentials
 				db.GetSqlType() == SqlType.Sqlite
 				? (IQueryBuilder)new SqliteQueryCreator()
 				: new MysqlQueryCreator());
-			sqlcreator.EnsureExists(new SqlTable("Homes",
+			sqlcreator.EnsureTableStructure(new SqlTable("Homes",
 				new SqlColumn("UserID", MySqlDbType.Int32),
 				new SqlColumn("HomeX", MySqlDbType.Int32),
 				new SqlColumn("HomeY", MySqlDbType.Int32),
 				new SqlColumn("Name", MySqlDbType.Text),
 				new SqlColumn("WorldID", MySqlDbType.Int32)));
-			sqlcreator.EnsureExists(new SqlTable("Nicknames",
+			sqlcreator.EnsureTableStructure(new SqlTable("Nicknames",
 				new SqlColumn("Name", MySqlDbType.Text),
 				new SqlColumn("Nickname", MySqlDbType.Text)));
 		}

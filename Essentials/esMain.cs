@@ -93,8 +93,6 @@ namespace Essentials
 			Commands.ChatCommands.Add(new Command("essentials.inventory.see", CMDinvsee, "invsee"));
 			Commands.ChatCommands.Add(new Command("essentials.whois", CMDwhois, "whois"));
             Commands.ChatCommands.Add(new Command("essentials.ids.search", ESFind, "find"));
-            Commands.ChatCommands.Add(new Command("essentials.ids.search", CMDsitems, "sitem", "si", "searchitem"));
-            Commands.ChatCommands.Add(new Command("essentials.ids.search", CMDsnpcs, "snpc", "sn", "searchnpc"));
 
 			#endregion
 
@@ -140,18 +138,6 @@ namespace Essentials
 
 		public void OnLeave(LeaveEventArgs args)
         {
-/*<<<<<<< HEAD
-        {
-=======
-		{
-            if (TShock.Players[args.Who] == null)
-                return;
-			if (esPlayers[args.Who].InvSee != null)
-			{
-				esPlayers[args.Who].InvSee.RestoreCharacter(TShock.Players[args.Who]);
-                esPlayers[args.Who].InvSee = null;
-			}
->>>>>>> d928640b7df72aed8e5ba34b45cb4398cf13af79*/
             if (esPlayers[args.Who] != null)
                 if (esPlayers[args.Who].InvSee != null)
                 {
@@ -2094,7 +2080,7 @@ namespace Essentials
 		#region Invsee
 		private void CMDinvsee(CommandArgs args)
 		{
-			if (!TShock.Config.ServerSideCharacter)
+			if (!TShock.ServerSideCharacterConfig.Enabled)
 			{
 				args.Player.SendErrorMessage("Server Side Character must be enabled.");
 				return;
