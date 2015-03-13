@@ -72,8 +72,8 @@ namespace Essentials
 			}
 			catch (Exception ex)
 			{
-				Log.ConsoleError("[Essentials] Config Exception. Check logs for more details.");
-				Log.Error(ex.ToString());
+				TShock.Log.ConsoleError("[Essentials] Config Exception. Check logs for more details.");
+				TShock.Log.Error(ex.ToString());
 			}
 		}
 		public static void ReloadConfig(CommandArgs args)
@@ -90,7 +90,7 @@ namespace Essentials
 			catch (Exception ex)
 			{
 				args.Player.SendSuccessMessage("[Essnetials] Reload failed. Check logs for more details.");
-				Log.Error(string.Concat("[Essentials] Config Exception:\n", ex.ToString()));
+				TShock.Log.Error(string.Concat("[Essentials] Config Exception:\n", ex.ToString()));
 			}
 		}
 	}

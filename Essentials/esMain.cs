@@ -12,7 +12,7 @@ using TShockAPI.Hooks;
 
 namespace Essentials
 {
-	[ApiVersion(1, 16)]
+	[ApiVersion(1, 17)]
 	public class Essentials : TerrariaPlugin
 	{
 		public override string Name { get { return "Essentials"; } }
@@ -2073,7 +2073,7 @@ namespace Essentials
 			Player.SendSuccessMessage("{0} in as {1}.", Player != args.Player ? string.Concat(args.Player.Name, " Logged you") : "Logged", user.Name);
 			if (Player != args.Player)
 				args.Player.SendSuccessMessage("Logged {0} in as {1}.", Player.Name, user.Name);
-			Log.ConsoleInfo(string.Format("{0} forced logged in {1}as user: {2}.", args.Player.Name, args.Player != Player ? string.Concat(Player.Name, " ") : string.Empty, user.Name));
+			TShock.Log.ConsoleInfo(string.Format("{0} forced logged in {1}as user: {2}.", args.Player.Name, args.Player != Player ? string.Concat(Player.Name, " ") : string.Empty, user.Name));
 		}
 		#endregion
 

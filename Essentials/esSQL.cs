@@ -79,7 +79,7 @@ namespace Essentials
 
 			if (db.Query(query, UserID, HomeX, HomeY, Name, WorldID) != 1)
 			{
-				Log.ConsoleError("[EssentialsDB] Creating a user's MyHome has faild");
+				TShock.Log.ConsoleError("[EssentialsDB] Creating a user's MyHome has faild");
 				return false;
 			}
 			return true;
@@ -93,7 +93,7 @@ namespace Essentials
 
 			if (db.Query(query, HomeX, HomeY, UserID, Name, WorldID) != 1)
 			{
-				Log.ConsoleError("[EssentialsDB] Updating a user's MyHome has failed!");
+				TShock.Log.ConsoleError("[EssentialsDB] Updating a user's MyHome has failed!");
 				return false;
 			}
 			return true;
@@ -107,7 +107,7 @@ namespace Essentials
 
 			if (db.Query(query, UserID, Name, WorldID) != 1)
 			{
-				Log.ConsoleError("[EssentialsDB] Removing a user's MyHome has faild");
+				TShock.Log.ConsoleError("[EssentialsDB] Removing a user's MyHome has faild");
 				return false;
 			}
 			return true;
@@ -156,7 +156,7 @@ namespace Essentials
 
 			if (db.Query(query, Name, Nickname) != 1)
 			{
-				Log.ConsoleError("[EssentialsDB] Creating a user's Nickname has faild");
+				TShock.Log.ConsoleError("[EssentialsDB] Creating a user's Nickname has faild");
 				return false;
 			}
 			return true;
@@ -170,7 +170,7 @@ namespace Essentials
 
 			if (db.Query(query, Nickname, Name) != 1)
 			{
-				Log.ConsoleError("[EssentialsDB] Updating a user's Nickname has failed!");
+				TShock.Log.ConsoleError("[EssentialsDB] Updating a user's Nickname has failed!");
 				return false;
 			}
 			return true;
@@ -184,7 +184,7 @@ namespace Essentials
 
 			if (db.Query(query, Name) != 1)
 			{
-				Log.ConsoleError("[EssentialsDB] Removing a user's Nickname has faild");
+				TShock.Log.ConsoleError("[EssentialsDB] Removing a user's Nickname has faild");
 				return false;
 			}
 			return true;
