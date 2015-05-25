@@ -926,12 +926,22 @@ namespace Essentials
 				{
 					var region = TShock.Regions.GetRegionByName(r);
 					if (region == null) continue;
-					if (region.InArea(args.Player.TileX, args.Player.TileY))
+					if (args.Player.CurrentRegion == region)
 					{
 						args.Player.SendErrorMessage("You cannot set your home in this region.");
 						return;
 					}
 				}
+
+                // Disable setting homes in protected regions
+                if (args.Player.CurrentRegion != null)
+                {
+                    if (!(args.Player.CurrentRegion.HasPermissionToBuildInRegion(args.Player) || args.Player.Group.HasPermission(Permissions.editregion) || args.Player.Group.HasPermission(Permissions.manageregion)))
+                    {
+                        args.Player.SendErrorMessage("You cannot set your home in this region.");
+                        return;
+                    }
+                }
 			}
 
 			/* get a list of the player's homes */
