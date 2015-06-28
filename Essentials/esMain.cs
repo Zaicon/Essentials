@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -945,7 +946,7 @@ namespace Essentials
 			}
 
 			/* get a list of the player's homes */
-			List<string> homes = esSQL.GetNames(args.Player.UserID, Main.worldID);
+			List<string> homes = esSQL.GetNames(args.Player.User.ID, Main.worldID);
 			/* how many homes is the user allowed to set */
 			int CanSet = esUtils.NoOfHomesCanSet(args.Player);
 
@@ -955,7 +956,7 @@ namespace Essentials
 				if (args.Parameters.Count < 1 || (args.Parameters.Count > 0 && CanSet == 1))
 				{
 					/* they dont specify a name OR they specify a name but they only have permission to set 1, use a default name */
-					if (esSQL.AddHome(args.Player.UserID, args.Player.TileX, args.Player.TileY, "1", Main.worldID))
+					if (esSQL.AddHome(args.Player.User.ID, args.Player.TileX, args.Player.TileY, "1", Main.worldID))
 						args.Player.SendSuccessMessage("Set home.");
 					else
 						args.Player.SendErrorMessage("An error occurred while setting your home.");
@@ -964,7 +965,7 @@ namespace Essentials
 				{
 					/* they specify a name And have permission to specify more than 1 */
 					string name = args.Parameters[0].ToLower();
-					if (esSQL.AddHome(args.Player.UserID, args.Player.TileX, args.Player.TileY, name, Main.worldID))
+					if (esSQL.AddHome(args.Player.User.ID, args.Player.TileX, args.Player.TileY, name, Main.worldID))
 						args.Player.SendSuccessMessage("Set home {0}.", name);
 					else
 						args.Player.SendErrorMessage("An error occurred while setting your home.");
@@ -985,7 +986,7 @@ namespace Essentials
 					if (homes.Contains(name))
 					{
 						/* They want to update a home */
-						if (esSQL.UpdateHome(args.Player.TileX, args.Player.TileY, args.Player.UserID, name, Main.worldID))
+						if (esSQL.UpdateHome(args.Player.TileX, args.Player.TileY, args.Player.User.ID, name, Main.worldID))
 							args.Player.SendSuccessMessage("Updated home {0}.", name);
 						else
 							args.Player.SendErrorMessage("An error occurred while updating your home.");
@@ -993,7 +994,7 @@ namespace Essentials
 					else
 					{
 						/* They want to add a new home */
-						if (esSQL.AddHome(args.Player.UserID, args.Player.TileX, args.Player.TileY, name, Main.worldID))
+						if (esSQL.AddHome(args.Player.User.ID, args.Player.TileX, args.Player.TileY, name, Main.worldID))
 							args.Player.SendSuccessMessage("Set home {0}.", name);
 						else
 							args.Player.SendErrorMessage("An error occurred while setting your home.");
@@ -1002,7 +1003,7 @@ namespace Essentials
 				else if (args.Parameters.Count < 1 && (1 < CanSet || CanSet == -1))
 				{
 					/* if they dont specify a name & can set more than 1  - add a new home*/
-					if (esSQL.AddHome(args.Player.UserID, args.Player.TileX, args.Player.TileY, esUtils.NextHome(homes), Main.worldID))
+					if (esSQL.AddHome(args.Player.User.ID, args.Player.TileX, args.Player.TileY, esUtils.NextHome(homes), Main.worldID))
 						args.Player.SendSuccessMessage("Set home.");
 					else
 						args.Player.SendErrorMessage("An error occurred while setting your home.");
@@ -1010,7 +1011,7 @@ namespace Essentials
 				else if (args.Parameters.Count > 0 && CanSet == 1)
 				{
 					/* They specify a name but can only set 1 home, update their current home */
-					if (esSQL.UpdateHome(args.Player.TileX, args.Player.TileY, args.Player.UserID, homes[0], Main.worldID))
+					if (esSQL.UpdateHome(args.Player.TileX, args.Player.TileY, args.Player.User.ID, homes[0], Main.worldID))
 						args.Player.SendSuccessMessage("Updated home.");
 					else
 						args.Player.SendErrorMessage("An error occurred while updating your home.");
@@ -1030,7 +1031,7 @@ namespace Essentials
 					if (homes.Count < CanSet || CanSet == -1)
 					{
 						/* They can set more homes */
-						if (esSQL.AddHome(args.Player.UserID, args.Player.TileX, args.Player.TileY, esUtils.NextHome(homes), Main.worldID))
+						if (esSQL.AddHome(args.Player.User.ID, args.Player.TileX, args.Player.TileY, esUtils.NextHome(homes), Main.worldID))
 							args.Player.SendSuccessMessage("Set home.");
 						else
 							args.Player.SendErrorMessage("An error occurred while setting your home.");
@@ -1049,7 +1050,7 @@ namespace Essentials
 					if (homes.Contains(name))
 					{
 						/* they want to update a home */
-						if (esSQL.UpdateHome(args.Player.TileX, args.Player.TileY, args.Player.UserID, name, Main.worldID))
+						if (esSQL.UpdateHome(args.Player.TileX, args.Player.TileY, args.Player.User.ID, name, Main.worldID))
 							args.Player.SendSuccessMessage("Updated home.");
 						else
 							args.Player.SendErrorMessage("An error occurred while updating your home.");
@@ -1060,7 +1061,7 @@ namespace Essentials
 						if (homes.Count < CanSet || CanSet == -1)
 						{
 							/* they can set more homes */
-							if (esSQL.AddHome(args.Player.UserID, args.Player.TileX, args.Player.TileY, name, Main.worldID))
+							if (esSQL.AddHome(args.Player.User.ID, args.Player.TileX, args.Player.TileY, name, Main.worldID))
 								args.Player.SendSuccessMessage("Set home {0}.", name);
 							else
 								args.Player.SendErrorMessage("An error occurred while setting your home.");
@@ -1097,7 +1098,7 @@ namespace Essentials
 			}
 
 			/* get a list of the player's homes */
-			List<string> homes = esSQL.GetNames(args.Player.UserID, Main.worldID);
+			List<string> homes = esSQL.GetNames(args.Player.User.ID, Main.worldID);
 			/* Set home position variable */
 			Point homePos = Point.Zero;
 
@@ -1110,7 +1111,7 @@ namespace Essentials
 			else if (homes.Count == 1)
 			{
 				/* they have 1 home */
-				homePos = esSQL.GetHome(args.Player.UserID, homes[0], Main.worldID);
+				homePos = esSQL.GetHome(args.Player.User.ID, homes[0], Main.worldID);
 			}
 			else if (homes.Count > 1)
 			{
@@ -1127,7 +1128,7 @@ namespace Essentials
 					string name = args.Parameters[0].ToLower();
 					if (homes.Contains(name))
 					{
-						homePos = esSQL.GetHome(args.Player.UserID, name, Main.worldID);
+						homePos = esSQL.GetHome(args.Player.User.ID, name, Main.worldID);
 					}
 					else
 					{
@@ -1181,7 +1182,7 @@ namespace Essentials
 			}
 
 			/* get a list of the player's homes */
-			List<string> homes = esSQL.GetNames(args.Player.UserID, Main.worldID);
+			List<string> homes = esSQL.GetNames(args.Player.User.ID, Main.worldID);
 
 			if (homes.Count < 1)
 			{
@@ -1191,7 +1192,7 @@ namespace Essentials
 			else if (homes.Count == 1)
 			{
 				/* they have 1 home */
-				if (esSQL.RemoveHome(args.Player.UserID, homes[0], Main.worldID))
+				if (esSQL.RemoveHome(args.Player.User.ID, homes[0], Main.worldID))
 					args.Player.SendSuccessMessage("Removed home.");
 				else
 					args.Player.SendErrorMessage("An error occurred while removing your home.");
@@ -1210,7 +1211,7 @@ namespace Essentials
 					string name = args.Parameters[0].ToLower();
 					if (homes.Contains(name))
 					{
-						if (esSQL.RemoveHome(args.Player.UserID, name, Main.worldID))
+						if (esSQL.RemoveHome(args.Player.User.ID, name, Main.worldID))
 							args.Player.SendSuccessMessage("Removed home {0}.", name);
 						else
 							args.Player.SendErrorMessage("An error occurred while removing your home.");
@@ -2075,8 +2076,8 @@ namespace Essentials
 
 			var Player = PlayersFound[0];
 			Player.Group = group;
-			Player.UserAccountName = user.Name;
-			Player.UserID = TShock.Users.GetUserID(Player.UserAccountName);
+			Player.User.Name = user.Name;
+			Player.User.ID = TShock.Users.GetUserID(Player.User.Name);
 			Player.IsLoggedIn = true;
 			Player.IgnoreActionsForInventory = "none";
 
@@ -2164,7 +2165,11 @@ namespace Essentials
 						args.Parameters.RemoveAt(0);
 						Query = string.Join(" ", args.Parameters);
                         var user = TShock.Users.GetUserByName(Query);
-                        Results.Add(new user_Obj(-1, user.Name, user.KnownIps.Split(',')[0]));
+                        if (user != null)
+                        {
+                            var iplist = JsonConvert.DeserializeObject<List<string>>(user.KnownIps);
+                            Results.Add(new user_Obj(-1, user.Name, iplist[0]));
+                        }
 					}
 					break;
 				case "-U":
@@ -2179,7 +2184,7 @@ namespace Essentials
 						}
 						foreach (var tPly in TShock.Players)
 						{
-							if (tPly.UserID == id)
+							if (tPly != null && tPly.User.ID == id)
 							{
                                 Results.Add(new user_Obj(id, tPly.Name, tPly.IP));
 							}
@@ -2191,7 +2196,11 @@ namespace Essentials
 						Type = "IP";
 						Query = args.Parameters[1];
                         var ipUser = TShock.Users.GetUsers().Find(user => user.KnownIps.Contains(Query));
-                        Results.Add(new user_Obj(-1, ipUser.Name, ipUser.KnownIps.Split(',')[0]));
+                        if (ipUser != null)
+                        {
+                            var iplist = JsonConvert.DeserializeObject<List<string>>(ipUser.KnownIps);
+                            Results.Add(new user_Obj(-1, ipUser.Name, iplist[0]));
+                        }
 					}
 					break;
 				default:
@@ -2207,11 +2216,15 @@ namespace Essentials
 			}
 			else if (Results.Count == 1)
 			{
-				args.Player.SendInfoMessage("Details of {0} search: {0}", Type, Query);
+				args.Player.SendInfoMessage("Details of {0} search: {1}", Type, Query);
 
-                if (TShock.Players.Contains(TShock.Utils.FindPlayer(Results[0].name)[0]))
+                List<TSPlayer> res = TShock.Utils.FindPlayer(Results[0].name);
+
+                
+
+                if (res.Count == 1)
                 {
-                    var ply = TShock.Utils.FindPlayer(Results[0].name)[0];
+                    var ply = res[0];
 
                     args.Player.SendSuccessMessage("UserID: {0}, Registered Name: {1}",
                     Results[0].UserID, Results[0].name);
@@ -2241,7 +2254,7 @@ namespace Essentials
                         if (r.name == pl.Name)
                         {
                             args.Player.SendInfoMessage("Online matches:");
-                            args.Player.SendSuccessMessage("({0}){1} (IP:{3})", pl.UserID, pl.Name, pl.IP);
+                            args.Player.SendSuccessMessage("({0}){1} (IP:{3})", pl.User.ID, pl.Name, pl.IP);
                             Results.RemoveAll(result => result == r);
                         }
                     });

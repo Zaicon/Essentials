@@ -3,4 +3,3 @@ C:\Users\Clay\Desktop\Terraria Dev Stuff\Plugins\Essentials-SignCommands-1-maste
 C:\Users\Clay\Desktop\Terraria Dev Stuff\Plugins\Essentials-SignCommands-1-master\Essentials-SignCommands-1-master\Essentials\obj\Release\Essentials.dll
 C:\Users\Clay\Documents\GitHub\Essentials\Build\Essentials.dll
 C:\Users\Clay\Documents\GitHub\Essentials\Essentials\obj\Release\Essentials.dll
-C:\Users\Clay\Documents\GitHub\Essentials\Essentials\obj\Release\Essentials.csprojResolveAssemblyReference.cache
