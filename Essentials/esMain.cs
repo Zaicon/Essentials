@@ -13,7 +13,7 @@ using TShockAPI.Hooks;
 
 namespace Essentials
 {
-	[ApiVersion(1, 17)]
+	[ApiVersion(1, 19)]
 	public class Essentials : TerrariaPlugin
 	{
 		public override string Name { get { return "Essentials"; } }
@@ -41,7 +41,6 @@ namespace Essentials
 			ServerApi.Hooks.ServerChat.Register(this, OnChat);
 			PlayerHooks.PlayerCommand += OnPlayerCommand;
 			ServerApi.Hooks.NetGetData.Register(this, OnGetData);
-			ServerApi.Hooks.NetSendBytes.Register(this, OnSendBytes);
 			ServerApi.Hooks.GameUpdate.Register(this, OnUpdate);
 		}
 
@@ -55,7 +54,6 @@ namespace Essentials
 				ServerApi.Hooks.ServerChat.Deregister(this, OnChat);
 				PlayerHooks.PlayerCommand -= OnPlayerCommand;
 				ServerApi.Hooks.NetGetData.Deregister(this, OnGetData);
-				ServerApi.Hooks.NetSendBytes.Deregister(this, OnSendBytes);
 				ServerApi.Hooks.GameUpdate.Deregister(this, OnUpdate);
 			}
 			base.Dispose(Disposing);
@@ -65,7 +63,7 @@ namespace Essentials
 		{
 			#region Add Commands
 			Commands.ChatCommands.Add(new Command("essentials.more", CMDmore, "more"));
-			Commands.ChatCommands.Add(new Command(new List<string> { "essentials.position.get", "essentials.position.getother" }, CMDpos, "pos", "getpos"));
+			//Commands.ChatCommands.Add(new Command(new List<string> { "essentials.position.get", "essentials.position.getother" }, CMDpos, "pos", "getpos"));
 			Commands.ChatCommands.Add(new Command("essentials.position.ruler", CMDruler, "ruler"));
 			Commands.ChatCommands.Add(new Command("essentials.helpop.ask", CMDhelpop, "helpop"));
 			Commands.ChatCommands.Add(new Command("essentials.suicide", CMDsuicide, "suicide", "die"));
@@ -311,28 +309,7 @@ namespace Essentials
 			}
 		}
 		#endregion
-
-		#region Send Bytes
-		void OnSendBytes(SendBytesEventArgs args)
-		{
-			if ((args.Buffer[4] != 7 && args.Buffer[4] != 18) || args.Socket.whoAmI < 0 || args.Socket.whoAmI > 255 || esPlayers[args.Socket.whoAmI].ptTime < 0.0)
-			{
-				return;
-			}
-			switch (args.Buffer[4])
-			{
-				case 7:
-					Buffer.BlockCopy(BitConverter.GetBytes((int)esPlayers[args.Socket.whoAmI].ptTime), 0, args.Buffer, 5, 4);
-					args.Buffer[9] = (byte)(esPlayers[args.Socket.whoAmI].ptDay ? 1 : 0);
-					break;
-				case 18:
-					args.Buffer[5] = (byte)(esPlayers[args.Socket.whoAmI].ptDay ? 1 : 0);
-					Buffer.BlockCopy(BitConverter.GetBytes((int)esPlayers[args.Socket.whoAmI].ptTime), 0, args.Buffer, 6, 4);
-					break;
-			}
-		}
-		#endregion
-
+        
 		#region Timer
 		public void OnUpdate(EventArgs args)
 		{
