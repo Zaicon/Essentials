@@ -1,4 +1,9 @@
-﻿using Newtonsoft.Json;
+﻿/*
+ * Original plugin by Scavenger.
+ * 
+ */
+
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -13,11 +18,11 @@ using TShockAPI.Hooks;
 
 namespace Essentials
 {
-	[ApiVersion(1, 21)]
+    [ApiVersion(1, 23)]
 	public class Essentials : TerrariaPlugin
 	{
 		public override string Name { get { return "Essentials"; } }
-		public override string Author { get { return "Scavenger"; } }
+		public override string Author { get { return "Zaicon"; } }
 		public override string Description { get { return "Some Essential commands for TShock!"; } }
 		public override Version Version { get { return Assembly.GetExecutingAssembly().GetName().Version; } }
 
@@ -63,12 +68,10 @@ namespace Essentials
 		{
 			#region Add Commands
 			Commands.ChatCommands.Add(new Command("essentials.more", CMDmore, "more"));
-			//Commands.ChatCommands.Add(new Command(new List<string> { "essentials.position.get", "essentials.position.getother" }, CMDpos, "pos", "getpos"));
 			Commands.ChatCommands.Add(new Command("essentials.position.ruler", CMDruler, "ruler"));
 			Commands.ChatCommands.Add(new Command("essentials.helpop.ask", CMDhelpop, "helpop"));
 			Commands.ChatCommands.Add(new Command("essentials.suicide", CMDsuicide, "suicide", "die"));
 			Commands.ChatCommands.Add(new Command("essentials.pvp.burn", CMDburn, "burn"));
-			Commands.ChatCommands.Add(new Command("essentials.kickall.kick", CMDkickall, "kickall"));
 			Commands.ChatCommands.Add(new Command("essentials.moon", CMDmoon, "moon"));
 			Commands.ChatCommands.Add(new Command(new List<string> { "essentials.back.tp", "essentials.back.death" }, CMDback, "b"));
 			Commands.ChatCommands.Add(new Command("essentials.home", CMDsethome, "sethome"));
@@ -87,7 +90,6 @@ namespace Essentials
 			Commands.ChatCommands.Add(new Command("essentials.ping", CMDping, "ping", "pong", "echo"));
 			Commands.ChatCommands.Add(new Command("essentials.sudo", CMDsudo, "sudo"));
 			Commands.ChatCommands.Add(new Command("essentials.near", CMDnear, "near"));
-			Commands.ChatCommands.Add(new Command("essentials.exacttime", CMDetime, "etime", "exacttime"));
 			Commands.ChatCommands.Add(new Command("essentials.forcelogin", CMDforcelogin, "forcelogin"));
 			Commands.ChatCommands.Add(new Command("essentials.inventory.see", CMDinvsee, "invsee"));
 			Commands.ChatCommands.Add(new Command("essentials.whois", CMDwhois, "whois"));
@@ -412,23 +414,6 @@ namespace Essentials
 		#endregion
 
 		#region Position Commands
-		private void CMDpos(CommandArgs args)
-		{
-			if (args.Player.Group.HasPermission("essentials.position.getother") && args.Parameters.Count > 0)
-			{
-				var PlayersFound = TShock.Utils.FindPlayer(string.Join(" ", args.Parameters));
-				if (PlayersFound.Count != 1)
-				{
-                    var matches = new List<string>();
-                    PlayersFound.ForEach(pl => { matches.Add(pl.Name); });
-                    TShock.Utils.SendMultipleMatchError(args.Player, matches);
-                    return;
-				}
-				args.Player.SendSuccessMessage("Position for {0}: X Tile: {1} - Y Tile: {2}", PlayersFound[0].Name, PlayersFound[0].TileX, PlayersFound[0].TileY);
-				return;
-			}
-			args.Player.SendSuccessMessage("X Tile: {0} - Y Tile: {1}", args.Player.TileX, args.Player.TileY);
-		}
 
 		private void CMDtppos(CommandArgs args)
 		{
@@ -549,23 +534,7 @@ namespace Essentials
 			args.Player.SendSuccessMessage("{0} Has been set on fire for {1} second(s).", PlayersFound[0].Name, duration);
 		}
 		#endregion
-
-		#region KickAll
-		private void CMDkickall(CommandArgs args)
-		{
-			string Reason = string.Empty;
-			if (args.Parameters.Count > 0)
-				Reason = " (" + string.Join(" ", args.Parameters) + ")";
-
-			foreach (var ePly in esPlayers)
-			{
-				if (ePly == null || ePly.TSPlayer.Group.HasPermission("essentials.kickall.immune")) continue;
-				ePly.TSPlayer.Disconnect(string.Format("Everyone has been kicked{0}", Reason));
-			}
-			TSPlayer.All.SendMessage("Everyone has been kicked from the server.", Color.MediumSeaGreen);
-		}
-		#endregion
-
+        
 		#region Moon
 		private void CMDmoon(CommandArgs args)
 		{
@@ -666,55 +635,11 @@ namespace Essentials
 
 		private void CMDsitems(CommandArgs args)
 		{
-            /*
-			if (args.Parameters.Count < 1)
-			{
-				args.Player.SendErrorMessage("Usage: /sitem <search term>");
-				return;
-			}
-
-			string Search = string.Join(" ", args.Parameters);
-			List<object> Results = esUtils.ItemIdSearch(Search);
-
-			if (Results.Count < 1)
-			{
-				args.Player.SendErrorMessage("Could not find any matching Items.");
-				return;
-			}
-
-			esPlayer ePly = esPlayers[args.Player.Index];
-
-			ePly.LastSearchResults = Results;
-			esUtils.DisplaySearchResults(args.Player, Results, 1);
-            */
-
             Commands.HandleCommand(args.Player, "/find -item " + string.Join(" ", args.Parameters.Select(p => p)));
 		}
 
 		private void CMDsnpcs(CommandArgs args)
 		{
-            /*
-			if (args.Parameters.Count < 1)
-			{
-				args.Player.SendErrorMessage("Usage: /snpc <search term>");
-				return;
-			}
-
-			string Search = string.Join(" ", args.Parameters);
-			List<object> Results = esUtils.NPCIdSearch(Search);
-
-			if (Results.Count < 1)
-			{
-				args.Player.SendErrorMessage("Could not find any matching NPCs.");
-				return;
-			}
-
-			esPlayer ePly = esPlayers[args.Player.Index];
-
-			ePly.LastSearchResults = Results;
-			esUtils.DisplaySearchResults(args.Player, Results, 1);
-            */
-
             Commands.HandleCommand(args.Player, "/find -npc " + string.Join(" ", args.Parameters.Select(p => p)));
 		}
 
@@ -797,7 +722,7 @@ namespace Essentials
                             if (npc.name.ToLower().Contains(match.Groups[2].Value.ToLower()))
                                 npcs.Add(String.Format("{0} (ID: {1})", npc.name, i));
                         }
-                        for (int i = 0; i < Terraria.Main.npcName.Count(); i++)
+                        for (int i = 0; i < Main.npcName.Length; i++)
                         {
                             if (Main.npcName[i].ToLower().Contains(match.Groups[2].Value.ToLower()))
                                 npcs.Add(String.Format("{0} (ID: {1})", Main.npcName[i], i));
@@ -1326,7 +1251,7 @@ namespace Essentials
 			if (ePly.LastCMD == string.Empty)
 				args.Player.SendErrorMessage("You have not entered a command yet.");
 			else
-				TShockAPI.Commands.HandleCommand(args.Player, ePly.LastCMD);
+				Commands.HandleCommand(args.Player, ePly.LastCMD);
 		}
 		#endregion
 
@@ -1740,17 +1665,7 @@ namespace Essentials
 				Ply.Group = OldGroup;
 		}
 		#endregion
-
-		#region SocialSpy
-		private void CMDsocialspy(CommandArgs args)
-		{
-			esPlayer ePly = esPlayers[args.Player.Index];
-
-			ePly.SocialSpy = !ePly.SocialSpy;
-			args.Player.SendSuccessMessage("Socialspy {0}abled.", ePly.SocialSpy ? "En" : "Dis");
-		}
-		#endregion
-
+        
 		#region Near
 		private void CMDnear(CommandArgs args)
 		{
@@ -1947,83 +1862,7 @@ namespace Essentials
 
 		}
 		#endregion
-
-		#region Exact Time
-		private void CMDetime(CommandArgs args)
-		{
-			if (args.Parameters.Count != 1 || !args.Parameters[0].Contains(':'))
-			{
-				args.Player.SendErrorMessage("Usage: /etime <hours>:<minutes>");
-				return;
-			}
-
-			string[] split = args.Parameters[0].Split(':');
-			string sHours = split[0];
-			string sMinutes = split[1];
-
-			bool PM = false;
-			int Hours = -1;
-			int Minutes = -1;
-			if (!int.TryParse(sHours, out Hours) || !int.TryParse(sMinutes, out Minutes))
-			{
-				args.Player.SendErrorMessage("Usage: /etime <hours>:<minutes>");
-				return;
-			}
-			if (Hours < 0 || Hours > 24)
-			{
-				args.Player.SendErrorMessage("Hours is out of range.");
-				return;
-			}
-			if (Minutes < 0 || Minutes > 59)
-			{
-				args.Player.SendErrorMessage("Minutes is out of range.");
-				return;
-			}
-
-			int TFHour = Hours;
-
-			if (TFHour == 24 || TFHour == 0)
-			{
-				Hours = 12;
-			}
-			if (TFHour >= 12 && TFHour < 24)
-			{
-				PM = true;
-				if (Hours > 12)
-					Hours -= 12;
-			}
-
-			int THour = Hours;
-
-			Hours = TFHour;
-			if (Hours == 24)
-				Hours = 0;
-
-			double TimeMinutes = Minutes / 60.0;
-			double MainTime = TimeMinutes + Hours;
-
-			if (MainTime >= 4.5 && MainTime < 24)
-				MainTime -= 24.0;
-
-			MainTime = MainTime + 19.5;
-			MainTime = MainTime / 24.0 * 86400.0;
-
-			bool Day = false;
-			if ((!PM && ((THour > 4 || (THour == 4 && Minutes >= 30))) && THour < 12) || (PM && ((THour < 7 || (THour == 7 && Minutes < 30)) || THour == 12)))
-				Day = true;
-
-			if (!Day)
-				MainTime -= 54000.0;
-
-			TSPlayer.Server.SetTime(Day, MainTime);
-
-			string min = Minutes.ToString();
-			if (Minutes < 10)
-				min = "0" + Minutes.ToString();
-			TSPlayer.All.SendSuccessMessage("{0} set time to {1}:{2} {3}.", args.Player.Name, THour, min, PM ? "PM" : "AM");
-		}
-		#endregion
-
+        
 		#region Force Login
 		private void CMDforcelogin(CommandArgs args)
 		{
@@ -2053,8 +1892,7 @@ namespace Essentials
 
 			var Player = PlayersFound[0];
 			Player.Group = group;
-			Player.User.Name = user.Name;
-			Player.User.ID = TShock.Users.GetUserID(Player.User.Name);
+            Player.User = user;
 			Player.IsLoggedIn = true;
 			Player.IgnoreActionsForInventory = "none";
 
