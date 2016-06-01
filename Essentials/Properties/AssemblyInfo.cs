@@ -10,7 +10,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("Essentials.Properties")]
-[assembly: AssemblyCopyright("Copyright © Zaicon 2016")]
+[assembly: AssemblyCopyright("Copyright ©  2015")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -29,5 +29,5 @@ using System.Runtime.InteropServices;
 //      Build Number
 //      Revision
 //
-[assembly: AssemblyVersion("3.0.6")]
-[assembly: AssemblyFileVersion("3.0.6")]
+[assembly: AssemblyVersion("3.0.5")]
+[assembly: AssemblyFileVersion("3.0.5")]
