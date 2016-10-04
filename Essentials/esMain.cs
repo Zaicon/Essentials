@@ -18,7 +18,7 @@ using TShockAPI.Hooks;
 
 namespace Essentials
 {
-    [ApiVersion(1, 23)]
+    [ApiVersion(1, 25)]
 	public class Essentials : TerrariaPlugin
 	{
 		public override string Name { get { return "Essentials"; } }
