@@ -6,10 +6,11 @@ using Mono.Data.Sqlite;
 using MySql.Data.MySqlClient;
 using TShockAPI;
 using TShockAPI.DB;
+using Microsoft.Xna.Framework;
 
 namespace Essentials
 {
-	public class esSQL
+	public class EsSQL
 	{
 		private static IDbConnection db;
 
