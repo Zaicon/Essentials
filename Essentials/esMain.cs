@@ -13,13 +13,15 @@ using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
 using Terraria;
+using Terraria.DataStructures;
+using Terraria.ID;
 using TerrariaApi.Server;
 using TShockAPI;
 using TShockAPI.Hooks;
 
 namespace Essentials
 {
-    [ApiVersion(1, 26)]
+    [ApiVersion(2, 0)]
 	public class Essentials : TerrariaPlugin
 	{
 		public override string Name { get { return "Essentials"; } }
@@ -503,7 +505,7 @@ namespace Essentials
 		{
 			if (!args.Player.RealPlayer)
 				return;
-			NetMessage.SendData(26, -1, -1, " decided it wasnt worth living.", args.Player.Index, 0, 15000);
+			NetMessage.SendPlayerHurt(26, PlayerDeathReason.ByCustomReason(" decided it wasnt worth living."), 15000, 1, false, false, 0);
 		}
 		#endregion
 
@@ -1273,7 +1275,9 @@ namespace Essentials
 			args.Parameters.RemoveAt(0); //remove player name
 			string reason = " " + string.Join(" ", args.Parameters);
 
-			NetMessage.SendData(26, -1, -1, reason, Ply.Index, 0f, 15000);
+			NetMessage.SendPlayerHurt(Ply.Index, PlayerDeathReason.ByCustomReason(reason), 15000, 1, false, false, 0);
+
+			//NetMessage.SendData(26, -1, -1, reason, Ply.Index, 0f, 15000);
 			args.Player.SendSuccessMessage("You just killed {0}.", Ply.Name);
 		}
 		#endregion
