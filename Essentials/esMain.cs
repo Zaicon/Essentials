@@ -14,14 +14,13 @@ using System.Text;
 using System.Text.RegularExpressions;
 using Terraria;
 using Terraria.DataStructures;
-using Terraria.ID;
 using TerrariaApi.Server;
 using TShockAPI;
 using TShockAPI.Hooks;
 
 namespace Essentials
 {
-    [ApiVersion(2, 0)]
+	[ApiVersion(2, 0)]
 	public class Essentials : TerrariaPlugin
 	{
 		public override string Name { get { return "Essentials"; } }
@@ -96,7 +95,7 @@ namespace Essentials
 			Commands.ChatCommands.Add(new Command("essentials.forcelogin", CMDforcelogin, "forcelogin"));
 			Commands.ChatCommands.Add(new Command("essentials.inventory.see", CMDinvsee, "invsee"));
 			Commands.ChatCommands.Add(new Command("essentials.whois", CMDwhois, "whois"));
-            Commands.ChatCommands.Add(new Command("essentials.ids.search", ESFind, "find"));
+			Commands.ChatCommands.Add(new Command("essentials.ids.search", ESFind, "find"));
 
 			#endregion
 
@@ -115,41 +114,41 @@ namespace Essentials
 		{
 			esPlayers[args.Who] = new esPlayer(args.Who);
 
-            if (esPlayers[args.Who] != null && TShock.Players[args.Who] != null)
-            {
-                if (Disabled.ContainsKey(TShock.Players[args.Who].Name))
-                {
-                    var ePly = esPlayers[args.Who];
-                    ePly.DisabledX = Disabled[TShock.Players[args.Who].Name][0];
-                    ePly.DisabledY = Disabled[TShock.Players[args.Who].Name][1];
-                    ePly.TSPlayer.Teleport(ePly.DisabledX * 16F, ePly.DisabledY * 16F);
-                    ePly.Disabled = true;
-                    ePly.Disable();
-                    ePly.LastDisabledCheck = DateTime.UtcNow;
-                    ePly.TSPlayer.SendErrorMessage("You are still disabled.");
-                }
+			if (esPlayers[args.Who] != null && TShock.Players[args.Who] != null)
+			{
+				if (Disabled.ContainsKey(TShock.Players[args.Who].Name))
+				{
+					var ePly = esPlayers[args.Who];
+					ePly.DisabledX = Disabled[TShock.Players[args.Who].Name][0];
+					ePly.DisabledY = Disabled[TShock.Players[args.Who].Name][1];
+					ePly.TSPlayer.Teleport(ePly.DisabledX * 16F, ePly.DisabledY * 16F);
+					ePly.Disabled = true;
+					ePly.Disable();
+					ePly.LastDisabledCheck = DateTime.UtcNow;
+					ePly.TSPlayer.SendErrorMessage("You are still disabled.");
+				}
 
 				if (EsSQL.GetNickname(TShock.Players[args.Who].Name, out string nickname))
-                {
-                    var ePly = esPlayers[args.Who];
-                    ePly.HasNickName = true;
-                    ePly.OriginalName = ePly.TSPlayer.Name;
-                    ePly.Nickname = nickname;
-                }
-            }
+				{
+					var ePly = esPlayers[args.Who];
+					ePly.HasNickName = true;
+					ePly.OriginalName = ePly.TSPlayer.Name;
+					ePly.Nickname = nickname;
+				}
+			}
 		}
 
 		public void OnLeave(LeaveEventArgs args)
-        {
-            if (esPlayers[args.Who] != null)
-                if (esPlayers[args.Who].InvSee != null)
-                {
-                    esPlayers[args.Who].InvSee.RestoreCharacter(TShock.Players[args.Who]);
+		{
+			if (esPlayers[args.Who] != null)
+				if (esPlayers[args.Who].InvSee != null)
+				{
+					esPlayers[args.Who].InvSee.RestoreCharacter(TShock.Players[args.Who]);
 
-                    esPlayers[args.Who].InvSee = null;
+					esPlayers[args.Who].InvSee = null;
 
-                    esPlayers[args.Who] = null;
-                }
+					esPlayers[args.Who] = null;
+				}
 		}
 		#endregion
 
@@ -164,25 +163,25 @@ namespace Essentials
 			var ePly = esPlayers[e.Who];
 			var tPly = TShock.Players[e.Who];
 
-            if (ePly == null || tPly == null)
-                return;
+			if (ePly == null || tPly == null)
+				return;
 
-            if (ePly.TSPlayer.Active && tPly.Active)
-            {
-                if (ePly.HasNickName && !e.Text.StartsWith("/") && !tPly.mute)
-                {
-                    e.Handled = true;
-                    string nick = Config.PrefixNicknamesWith + ePly.Nickname;
-                    TSPlayer.All.SendMessage(String.Format(TShock.Config.ChatFormat, tPly.Group.Name, tPly.Group.Prefix, nick, tPly.Group.Suffix, e.Text),
-                                    tPly.Group.R, tPly.Group.G, tPly.Group.B);
-                }
-                else if (ePly.HasNickName && e.Text.StartsWith("/me ") && !tPly.mute)
-                {
-                    e.Handled = true;
-                    string nick = Config.PrefixNicknamesWith + ePly.Nickname;
-                    TSPlayer.All.SendMessage(string.Format("*{0} {1}", nick, e.Text.Remove(0, 4)), 205, 133, 63);
-                }
-            }
+			if (ePly.TSPlayer.Active && tPly.Active)
+			{
+				if (ePly.HasNickName && !e.Text.StartsWith("/") && !tPly.mute)
+				{
+					e.Handled = true;
+					string nick = Config.PrefixNicknamesWith + ePly.Nickname;
+					TSPlayer.All.SendMessage(String.Format(TShock.Config.ChatFormat, tPly.Group.Name, tPly.Group.Prefix, nick, tPly.Group.Suffix, e.Text),
+									tPly.Group.R, tPly.Group.G, tPly.Group.B);
+				}
+				else if (ePly.HasNickName && e.Text.StartsWith("/me ") && !tPly.mute)
+				{
+					e.Handled = true;
+					string nick = Config.PrefixNicknamesWith + ePly.Nickname;
+					TSPlayer.All.SendMessage(string.Format("*{0} {1}", nick, e.Text.Remove(0, 4)), 205, 133, 63);
+				}
+			}
 		}
 		public void OnPlayerCommand(PlayerCommandEventArgs e)
 		{
@@ -309,11 +308,11 @@ namespace Essentials
 
 					}
 					break;
-				#endregion
+					#endregion
 			}
 		}
 		#endregion
-        
+
 		#region Timer
 		public void OnUpdate(EventArgs args)
 		{
@@ -326,10 +325,10 @@ namespace Essentials
 					{
 						continue;
 					}
-                    if (ePly.TSPlayer == null)
-                    {
-                        continue;
-                    }
+					if (ePly.TSPlayer == null)
+					{
+						continue;
+					}
 
 					if (!ePly.SavedBackAction && ePly.TSPlayer.Dead)
 					{
@@ -433,7 +432,7 @@ namespace Essentials
 			}
 
 			if (args.Parameters.Count == 1)
-				Y = esUtils.GetTop(X);
+				Y = EsUtils.GetTop(X);
 
 			var ePly = esPlayers[args.Player.Index];
 			if (ePly != null)
@@ -525,16 +524,16 @@ namespace Essentials
 			var PlayersFound = TShock.Utils.FindPlayer(args.Parameters[0]);
 			if (PlayersFound.Count != 1)
 			{
-                var matches = new List<string>();
-                PlayersFound.ForEach(pl => { matches.Add(pl.Name); });
-                TShock.Utils.SendMultipleMatchError(args.Player, matches);
-                return;
+				var matches = new List<string>();
+				PlayersFound.ForEach(pl => { matches.Add(pl.Name); });
+				TShock.Utils.SendMultipleMatchError(args.Player, matches);
+				return;
 			}
 			PlayersFound[0].SetBuff(24, duration);
 			args.Player.SendSuccessMessage("{0} Has been set on fire for {1} second(s).", PlayersFound[0].Name, duration);
 		}
 		#endregion
-        
+
 		#region Moon
 		private void CMDmoon(CommandArgs args)
 		{
@@ -630,181 +629,225 @@ namespace Essentials
 
 			var ePly = esPlayers[args.Player.Index];
 
-			esUtils.DisplaySearchResults(args.Player, ePly.LastSearchResults, Page);
+			EsUtils.DisplaySearchResults(args.Player, ePly.LastSearchResults, Page);
 		}
 
 		private void CMDsitems(CommandArgs args)
 		{
-            Commands.HandleCommand(args.Player, "/find -item " + string.Join(" ", args.Parameters.Select(p => p)));
+			Commands.HandleCommand(args.Player, "/find -item " + string.Join(" ", args.Parameters.Select(p => p)));
 		}
 
 		private void CMDsnpcs(CommandArgs args)
 		{
-            Commands.HandleCommand(args.Player, "/find -npc " + string.Join(" ", args.Parameters.Select(p => p)));
+			Commands.HandleCommand(args.Player, "/find -npc " + string.Join(" ", args.Parameters.Select(p => p)));
 		}
 
-        private void ESFind(CommandArgs args)
-        {
-            var regex = new Regex(@"^\w+ -(\w+) (.+?) ?(\d*)$");
-            Match match = regex.Match(args.Message);
-            if (!match.Success)
-            {
-                args.Player.SendErrorMessage("Invalid syntax! Proper syntax: {0}find <-switch> <name...> [page]", TShock.Config.CommandSpecifier);
-                args.Player.SendSuccessMessage("Valid {0}find switches:", TShock.Config.CommandSpecifier);
-                args.Player.SendInfoMessage("-command: Finds a command.");
-                args.Player.SendInfoMessage("-item: Finds an item.");
-                args.Player.SendInfoMessage("-npc: Finds an NPC.");
-                args.Player.SendInfoMessage("-tile: Finds a tile.");
-                args.Player.SendInfoMessage("-wall: Finds a wall.");
-                return;
-            }
+		private void ESFind(CommandArgs args)
+		{
+			var regex = new Regex(@"^\w+ -(\w+) (.+?) ?(\d*)$");
+			Match match = regex.Match(args.Message);
+			if (!match.Success)
+			{
+				args.Player.SendErrorMessage("Invalid syntax! Proper syntax: {0}find <-switch> <name...> [page]", TShock.Config.CommandSpecifier);
+				args.Player.SendSuccessMessage("Valid {0}find switches:", TShock.Config.CommandSpecifier);
+				args.Player.SendInfoMessage("-command, -item, -npc, -tile, -wall, -buff, -projectile, -prefix");
+				return;
+			}
 
-            int page = 1;
-            if (!String.IsNullOrWhiteSpace(match.Groups[3].Value) && (!int.TryParse(match.Groups[3].Value, out page) || page <= 0))
-            {
-                args.Player.SendErrorMessage("Invalid page '{0}'!", match.Groups[3].Value);
-                return;
-            }
+			int page = 1;
+			if (!String.IsNullOrWhiteSpace(match.Groups[3].Value) && (!int.TryParse(match.Groups[3].Value, out page) || page <= 0))
+			{
+				args.Player.SendErrorMessage("Invalid page '{0}'!", match.Groups[3].Value);
+				return;
+			}
 
-            switch (match.Groups[1].Value.ToLowerInvariant())
-            {
-                #region Command
-                case "command":
-                    var commands = new List<string>();
+			switch (match.Groups[1].Value.ToLowerInvariant())
+			{
+				#region Command
+				case "command":
+					var commands = new List<string>();
 
-                    foreach (Command command in TShockAPI.Commands.ChatCommands.Where(c => c.Names.Any(s => s.ToLower().Contains(match.Groups[2].Value.ToLower()))))
-                        commands.Add(String.Format("{0} (Permission: {1})", command.Name, command.Permissions.FirstOrDefault()));
+					foreach (Command command in TShockAPI.Commands.ChatCommands.Where(c => c.Names.Any(s => s.ToLower().Contains(match.Groups[2].Value.ToLower()))))
+						commands.Add(String.Format("{0} (Permission: {1})", command.Name, command.Permissions.FirstOrDefault()));
 
-                    PaginationTools.SendPage(args.Player, page, commands,
-                        new PaginationTools.Settings
-                        {
-                            HeaderFormat = "Found Commands ({0}/{1}):",
-                            FooterFormat = String.Format("Type /find -command {0} {{0}} for more", match.Groups[2].Value),
-                            NothingToDisplayString = "No commands were found."
-                        });
-                    return;
-                #endregion
-                #region Item
-                case "item":
-                    var items = new List<string>();
+					PaginationTools.SendPage(args.Player, page, commands,
+						new PaginationTools.Settings
+						{
+							HeaderFormat = "Found Commands ({0}/{1}):",
+							FooterFormat = String.Format("Type /find -command {0} {{0}} for more", match.Groups[2].Value),
+							NothingToDisplayString = "No commands were found."
+						});
+					return;
+				#endregion
+				#region Item
+				case "item":
+					var items = new List<string>();
 
-                    
-                        for (int i = -48; i < 0; i++)
-                        {
-                            var item = new Item();
-                            item.netDefaults(i);
-                            if (item.name.ToLower().Contains(match.Groups[2].Value.ToLower()))
-                                items.Add(String.Format("{0} (ID: {1})", item.name, i));
-                        }
-                        for (int i = 0; i < Main.itemName.Length; i++)
-                        {
-                            if (Main.itemName[i].ToLower().Contains(match.Groups[2].Value.ToLower()))
-                                items.Add(String.Format("{0} (ID: {1})", Main.itemName[i], i));
-                        }
 
-                    PaginationTools.SendPage(args.Player, page, items,
-                        new PaginationTools.Settings
-                        {
-                            HeaderFormat = "Found Items ({0}/{1}):",
-                            FooterFormat = String.Format("Type /find -item {0} {{0}} for more", match.Groups[2].Value),
-                            NothingToDisplayString = "No items were found."
-                        });
-                    return;
-                #endregion
-                #region NPC
-                case "npc":
-                    var npcs = new List<string>();
+					for (int i = -48; i < 0; i++)
+					{
+						var item = new Item();
+						item.netDefaults(i);
+						if (item.name.ToLower().Contains(match.Groups[2].Value.ToLower()))
+							items.Add(String.Format("{0} (ID: {1})", item.name, i));
+					}
+					for (int i = 0; i < Main.itemName.Length; i++)
+					{
+						if (Main.itemName[i].ToLower().Contains(match.Groups[2].Value.ToLower()))
+							items.Add(String.Format("{0} (ID: {1})", Main.itemName[i], i));
+					}
 
-                        for (int i = -65; i < 0; i++)
-                        {
-                            var npc = new NPC();
-                            npc.netDefaults(i);
-                            if (npc.name.ToLower().Contains(match.Groups[2].Value.ToLower()))
-                                npcs.Add(String.Format("{0} (ID: {1})", npc.name, i));
-                        }
-                        for (int i = 0; i < Main.npcName.Length; i++)
-                        {
-                            if (Main.npcName[i].ToLower().Contains(match.Groups[2].Value.ToLower()))
-                                npcs.Add(String.Format("{0} (ID: {1})", Main.npcName[i], i));
-                        }
+					PaginationTools.SendPage(args.Player, page, items,
+						new PaginationTools.Settings
+						{
+							HeaderFormat = "Found Items ({0}/{1}):",
+							FooterFormat = String.Format("Type /find -item {0} {{0}} for more", match.Groups[2].Value),
+							NothingToDisplayString = "No items were found."
+						});
+					return;
+				#endregion
+				#region NPC
+				case "npc":
+					var npcs = new List<string>();
 
-                    PaginationTools.SendPage(args.Player, page, npcs,
-                        new PaginationTools.Settings
-                        {
-                            HeaderFormat = "Found NPCs ({0}/{1}):",
-                            FooterFormat = String.Format("Type /find -npc {0} {{0}} for more", match.Groups[2].Value),
-                            NothingToDisplayString = "No NPCs were found.",
-                        });
-                    return;
-                #endregion
-                #region Tile
-                case "tile":
-                    var tiles = new List<string>();
+					for (int i = -65; i < 0; i++)
+					{
+						var npc = new NPC();
+						npc.netDefaults(i);
+						if (npc.name.ToLower().Contains(match.Groups[2].Value.ToLower()))
+							npcs.Add(String.Format("{0} (ID: {1})", npc.name, i));
+					}
+					for (int i = 0; i < Main.npcName.Length; i++)
+					{
+						if (Main.npcName[i].ToLower().Contains(match.Groups[2].Value.ToLower()))
+							npcs.Add(String.Format("{0} (ID: {1})", Main.npcName[i], i));
+					}
 
-                        foreach (FieldInfo fi in typeof(Terraria.ID.TileID).GetFields())
-                        {
-                            var sb = new StringBuilder();
-                            for (int i = 0; i < fi.Name.Length; i++)
-                            {
-                                if (Char.IsUpper(fi.Name[i]) && i > 0)
-                                    sb.Append(" ").Append(fi.Name[i]);
-                                else
-                                    sb.Append(fi.Name[i]);
-                            }
+					PaginationTools.SendPage(args.Player, page, npcs,
+						new PaginationTools.Settings
+						{
+							HeaderFormat = "Found NPCs ({0}/{1}):",
+							FooterFormat = String.Format("Type /find -npc {0} {{0}} for more", match.Groups[2].Value),
+							NothingToDisplayString = "No NPCs were found.",
+						});
+					return;
+				#endregion
+				#region Tile
+				case "tile":
+					var tiles = new List<string>();
 
-                            string name = sb.ToString();
-                            if (name.ToLower().Contains(match.Groups[2].Value.ToLower()))
-                                tiles.Add(String.Format("{0} (ID: {1})", name, fi.GetValue(null)));
-                        }
+					foreach (FieldInfo fi in typeof(Terraria.ID.TileID).GetFields())
+					{
+						var sb = new StringBuilder();
+						for (int i = 0; i < fi.Name.Length; i++)
+						{
+							if (Char.IsUpper(fi.Name[i]) && i > 0)
+								sb.Append(" ").Append(fi.Name[i]);
+							else
+								sb.Append(fi.Name[i]);
+						}
 
-                    PaginationTools.SendPage(args.Player, page, tiles,
-                        new PaginationTools.Settings
-                        {
-                            HeaderFormat = "Found Tiles ({0}/{1}):",
-                            FooterFormat = String.Format("Type /find -tile {0} {{0}} for more", match.Groups[2].Value),
-                            NothingToDisplayString = "No tiles were found.",
-                        });
-                    return;
-                #endregion
-                #region Wall
-                case "wall":
-                    var walls = new List<string>();
+						string name = sb.ToString();
+						if (name.ToLower().Contains(match.Groups[2].Value.ToLower()))
+							tiles.Add(String.Format("{0} (ID: {1})", name, fi.GetValue(null)));
+					}
 
-                        foreach (FieldInfo fi in typeof(Terraria.ID.WallID).GetFields())
-                        {
-                            var sb = new StringBuilder();
-                            for (int i = 0; i < fi.Name.Length; i++)
-                            {
-                                if (Char.IsUpper(fi.Name[i]) && i > 0)
-                                    sb.Append(" ").Append(fi.Name[i]);
-                                else
-                                    sb.Append(fi.Name[i]);
-                            }
+					PaginationTools.SendPage(args.Player, page, tiles,
+						new PaginationTools.Settings
+						{
+							HeaderFormat = "Found Tiles ({0}/{1}):",
+							FooterFormat = String.Format("Type /find -tile {0} {{0}} for more", match.Groups[2].Value),
+							NothingToDisplayString = "No tiles were found.",
+						});
+					return;
+				#endregion
+				#region Wall
+				case "wall":
+					var walls = new List<string>();
 
-                            string name = sb.ToString();
-                            if (name.ToLower().Contains(match.Groups[2].Value.ToLower()))
-                                walls.Add(String.Format("{0} (ID: {1})", name, fi.GetValue(null)));
-                        }
+					foreach (FieldInfo fi in typeof(Terraria.ID.WallID).GetFields())
+					{
+						var sb = new StringBuilder();
+						for (int i = 0; i < fi.Name.Length; i++)
+						{
+							if (Char.IsUpper(fi.Name[i]) && i > 0)
+								sb.Append(" ").Append(fi.Name[i]);
+							else
+								sb.Append(fi.Name[i]);
+						}
 
-                    PaginationTools.SendPage(args.Player, page, walls,
-                        new PaginationTools.Settings
-                        {
-                            HeaderFormat = "Found Walls ({0}/{1}):",
-                            FooterFormat = String.Format("Type /find -wall {0} {{0}} for more", match.Groups[2].Value),
-                            NothingToDisplayString = "No walls were found.",
-                        });
-                    return;
-                #endregion
-                default:
-                    args.Player.SendSuccessMessage("Valid {0}find switches:", TShock.Config.CommandSpecifier);
-                    args.Player.SendInfoMessage("-command: Finds a command.");
-                    args.Player.SendInfoMessage("-item: Finds an item.");
-                    args.Player.SendInfoMessage("-npc: Finds an NPC.");
-                    args.Player.SendInfoMessage("-tile: Finds a tile.");
-                    args.Player.SendInfoMessage("-wall: Finds a wall.");
-                    return;
-            }
-        }
+						string name = sb.ToString();
+						if (name.ToLower().Contains(match.Groups[2].Value.ToLower()))
+							walls.Add(String.Format("{0} (ID: {1})", name, fi.GetValue(null)));
+					}
+
+					PaginationTools.SendPage(args.Player, page, walls,
+						new PaginationTools.Settings
+						{
+							HeaderFormat = "Found Walls ({0}/{1}):",
+							FooterFormat = String.Format("Type /find -wall {0} {{0}} for more", match.Groups[2].Value),
+							NothingToDisplayString = "No walls were found.",
+						});
+					return;
+				case "buff":
+					var buffs = new List<string>();
+					for (int i = 0; i < Main.buffName.Length; i++)
+					{
+						if (Main.buffName[i] == null)
+							continue;
+						if (Main.buffName[i].ToLower().Contains(match.Groups[2].Value.ToLower()))
+							buffs.Add($"{Main.buffName[i]} (ID: {i})");
+					}
+					PaginationTools.SendPage(args.Player, page, buffs,
+						new PaginationTools.Settings
+						{
+							HeaderFormat = "Found Buffs ({0}/{1}):",
+							FooterFormat = String.Format("Type /find -buff {0} {{0}} for more", match.Groups[2].Value),
+							NothingToDisplayString = "No buffs were found.",
+						});
+					return;
+				case "projectile":
+				case "proj":
+					var projs = new List<string>();
+					for (int i = 0; i < Main.projName.Length; i++)
+					{
+						if (Main.projName[i] == null)
+							continue;
+						if (Main.projName[i].ToLower().Contains(match.Groups[2].Value.ToLower()))
+							projs.Add($"{Main.projName[i]} (ID: {i})");
+					}
+					PaginationTools.SendPage(args.Player, page, projs,
+						new PaginationTools.Settings
+						{
+							HeaderFormat = "Found Projectiles ({0}/{1}):",
+							FooterFormat = String.Format("Type /find -projectile {0} {{0}} for more", match.Groups[2].Value),
+							NothingToDisplayString = "No buffs were found.",
+						});
+					return;
+				case "prefix":
+					var prefixes = new List<string>();
+					for (int i = 0; i < Lang.prefix.Length; i++)
+					{
+						if (Lang.prefix[i] == null)
+							continue;
+						if (Lang.prefix[i].ToLower().Contains(match.Groups[2].Value.ToLower()))
+							prefixes.Add($"{Lang.prefix[i]} (ID: {i})");
+					}
+					PaginationTools.SendPage(args.Player, page, prefixes,
+						new PaginationTools.Settings
+						{
+							HeaderFormat = "Found Prefixes ({0}/{1}):",
+							FooterFormat = String.Format("Type /find -prefix {0} {{0}} for more", match.Groups[2].Value),
+							NothingToDisplayString = "No buffs were found.",
+						});
+					return;
+				#endregion
+				default:
+					args.Player.SendSuccessMessage("Valid {0}find switches:", TShock.Config.CommandSpecifier);
+					args.Player.SendInfoMessage("-command, -item, -npc, -tile, -wall, -buff, -projectile, -prefix");
+					return;
+			}
+		}
 		#endregion
 
 		#region MyHome
@@ -836,21 +879,21 @@ namespace Essentials
 					}
 				}
 
-                // Disable setting homes in protected regions
-                if (args.Player.CurrentRegion != null)
-                {
-                    if (!(args.Player.CurrentRegion.HasPermissionToBuildInRegion(args.Player) || args.Player.Group.HasPermission(Permissions.editregion) || args.Player.Group.HasPermission(Permissions.manageregion)))
-                    {
-                        args.Player.SendErrorMessage("You cannot set your home in this region.");
-                        return;
-                    }
-                }
+				// Disable setting homes in protected regions
+				if (args.Player.CurrentRegion != null)
+				{
+					if (!(args.Player.CurrentRegion.HasPermissionToBuildInRegion(args.Player) || args.Player.Group.HasPermission(Permissions.editregion) || args.Player.Group.HasPermission(Permissions.manageregion)))
+					{
+						args.Player.SendErrorMessage("You cannot set your home in this region.");
+						return;
+					}
+				}
 			}
 
 			/* get a list of the player's homes */
 			List<string> homes = EsSQL.GetNames(args.Player.User.ID, Main.worldID);
 			/* how many homes is the user allowed to set */
-			int CanSet = esUtils.NoOfHomesCanSet(args.Player);
+			int CanSet = EsUtils.NoOfHomesCanSet(args.Player);
 
 			if (homes.Count < 1)
 			{
@@ -905,7 +948,7 @@ namespace Essentials
 				else if (args.Parameters.Count < 1 && (1 < CanSet || CanSet == -1))
 				{
 					/* if they dont specify a name & can set more than 1  - add a new home*/
-					if (EsSQL.AddHome(args.Player.User.ID, args.Player.TileX, args.Player.TileY, esUtils.NextHome(homes), Main.worldID))
+					if (EsSQL.AddHome(args.Player.User.ID, args.Player.TileX, args.Player.TileY, EsUtils.NextHome(homes), Main.worldID))
 						args.Player.SendSuccessMessage("Set home.");
 					else
 						args.Player.SendErrorMessage("An error occurred while setting your home.");
@@ -933,7 +976,7 @@ namespace Essentials
 					if (homes.Count < CanSet || CanSet == -1)
 					{
 						/* They can set more homes */
-						if (EsSQL.AddHome(args.Player.User.ID, args.Player.TileX, args.Player.TileY, esUtils.NextHome(homes), Main.worldID))
+						if (EsSQL.AddHome(args.Player.User.ID, args.Player.TileX, args.Player.TileY, EsUtils.NextHome(homes), Main.worldID))
 							args.Player.SendSuccessMessage("Set home.");
 						else
 							args.Player.SendErrorMessage("An error occurred while setting your home.");
@@ -1364,7 +1407,7 @@ namespace Essentials
 		#region Top, Up and Down
 		private void CMDtop(CommandArgs args)
 		{
-			int Y = esUtils.GetTop(args.Player.TileX);
+			int Y = EsUtils.GetTop(args.Player.TileX);
 			if (Y == -1)
 			{
 				args.Player.SendErrorMessage("You are already on the top.");
@@ -1389,7 +1432,7 @@ namespace Essentials
 				return;
 			}
 
-			int Y = esUtils.GetUp(args.Player.TileX, args.Player.TileY);
+			int Y = EsUtils.GetUp(args.Player.TileX, args.Player.TileY);
 			if (Y == -1)
 			{
 				args.Player.SendErrorMessage("You are already on the top.");
@@ -1398,7 +1441,7 @@ namespace Essentials
 			bool limit = false;
 			for (int i = 1; i < levels; i++)
 			{
-				int newY = esUtils.GetUp(args.Player.TileX, Y);
+				int newY = EsUtils.GetUp(args.Player.TileX, Y);
 				if (newY == -1)
 				{
 					levels = i;
@@ -1427,7 +1470,7 @@ namespace Essentials
 				return;
 			}
 
-			int Y = esUtils.GetDown(args.Player.TileX, args.Player.TileY);
+			int Y = EsUtils.GetDown(args.Player.TileX, args.Player.TileY);
 			if (Y == -1)
 			{
 				args.Player.SendErrorMessage("You are already on the bottom.");
@@ -1436,7 +1479,7 @@ namespace Essentials
 			bool limit = false;
 			for (int i = 1; i < levels; i++)
 			{
-				int newY = esUtils.GetDown(args.Player.TileX, Y);
+				int newY = EsUtils.GetDown(args.Player.TileX, Y);
 				if (newY == -1)
 				{
 					levels = i;
@@ -1468,7 +1511,7 @@ namespace Essentials
 				return;
 			}
 
-			int X = esUtils.GetLeft(args.Player.TileX, args.Player.TileY);
+			int X = EsUtils.GetLeft(args.Player.TileX, args.Player.TileY);
 			if (X == -1)
 			{
 				args.Player.SendErrorMessage("You cannot go any further left.");
@@ -1477,7 +1520,7 @@ namespace Essentials
 			bool limit = false;
 			for (int i = 1; i < levels; i++)
 			{
-				int newX = esUtils.GetLeft(X, args.Player.TileY);
+				int newX = EsUtils.GetLeft(X, args.Player.TileY);
 				if (newX == -1)
 				{
 					levels = i;
@@ -1506,7 +1549,7 @@ namespace Essentials
 				return;
 			}
 
-			int X = esUtils.GetRight(args.Player.TileX, args.Player.TileY);
+			int X = EsUtils.GetRight(args.Player.TileX, args.Player.TileY);
 			if (X == -1)
 			{
 				args.Player.SendErrorMessage("You cannot go any further right.");
@@ -1515,7 +1558,7 @@ namespace Essentials
 			bool limit = false;
 			for (int i = 1; i < levels; i++)
 			{
-				int newX = esUtils.GetRight(X, args.Player.TileY);
+				int newX = EsUtils.GetRight(X, args.Player.TileY);
 				if (newX == -1)
 				{
 					levels = i;
@@ -1557,12 +1600,12 @@ namespace Essentials
 				var PlayersFound = TShock.Utils.FindPlayer(args.Parameters[1]);
 
 				if (PlayersFound.Count > 1)
-                {
-                    List<string> matches = new List<string>();
-                    PlayersFound.ForEach(pl => { matches.Add(pl.Name); });
-                    TShock.Utils.SendMultipleMatchError(args.Player, matches);
-                    return;
-                }
+				{
+					List<string> matches = new List<string>();
+					PlayersFound.ForEach(pl => { matches.Add(pl.Name); });
+					TShock.Utils.SendMultipleMatchError(args.Player, matches);
+					return;
+				}
 
 				Ply = PlayersFound[0];
 			}
@@ -1667,7 +1710,7 @@ namespace Essentials
 				Ply.Group = OldGroup;
 		}
 		#endregion
-        
+
 		#region Near
 		private void CMDnear(CommandArgs args)
 		{
@@ -1862,7 +1905,7 @@ namespace Essentials
 
 		}
 		#endregion
-        
+
 		#region Force Login
 		private void CMDforcelogin(CommandArgs args)
 		{
@@ -1892,7 +1935,7 @@ namespace Essentials
 
 			var Player = PlayersFound[0];
 			Player.Group = group;
-            Player.User = user;
+			Player.User = user;
 			Player.IsLoggedIn = true;
 			Player.IgnoreActionsForInventory = "none";
 
@@ -1979,12 +2022,12 @@ namespace Essentials
 						Type = "Exact name";
 						args.Parameters.RemoveAt(0);
 						Query = string.Join(" ", args.Parameters);
-                        var user = TShock.Users.GetUserByName(Query);
-                        if (user != null)
-                        {
-                            var iplist = JsonConvert.DeserializeObject<List<string>>(user.KnownIps);
-                            Results.Add(new User_Obj(-1, user.Name, iplist[0]));
-                        }
+						var user = TShock.Users.GetUserByName(Query);
+						if (user != null)
+						{
+							var iplist = JsonConvert.DeserializeObject<List<string>>(user.KnownIps);
+							Results.Add(new User_Obj(-1, user.Name, iplist[0]));
+						}
 					}
 					break;
 				case "-U":
@@ -2001,7 +2044,7 @@ namespace Essentials
 						{
 							if (tPly != null && tPly.User.ID == id)
 							{
-                                Results.Add(new User_Obj(id, tPly.Name, tPly.IP));
+								Results.Add(new User_Obj(id, tPly.Name, tPly.IP));
 							}
 						}
 					}
@@ -2010,18 +2053,18 @@ namespace Essentials
 					{
 						Type = "IP";
 						Query = args.Parameters[1];
-                        var ipUser = TShock.Users.GetUsers().Find(user => user.KnownIps.Contains(Query));
-                        if (ipUser != null)
-                        {
-                            var iplist = JsonConvert.DeserializeObject<List<string>>(ipUser.KnownIps);
-                            Results.Add(new User_Obj(-1, ipUser.Name, iplist[0]));
-                        }
+						var ipUser = TShock.Users.GetUsers().Find(user => user.KnownIps.Contains(Query));
+						if (ipUser != null)
+						{
+							var iplist = JsonConvert.DeserializeObject<List<string>>(ipUser.KnownIps);
+							Results.Add(new User_Obj(-1, ipUser.Name, iplist[0]));
+						}
 					}
 					break;
 				default:
 					{
 						Query = string.Join(" ", args.Parameters);
-                        //Results = TShock.Utils.FindPlayer(Query);
+						//Results = TShock.Utils.FindPlayer(Query);
 					}
 					break;
 			}
@@ -2033,66 +2076,66 @@ namespace Essentials
 			{
 				args.Player.SendInfoMessage("Details of {0} search: {1}", Type, Query);
 
-                List<TSPlayer> res = TShock.Utils.FindPlayer(Results[0].name);
+				List<TSPlayer> res = TShock.Utils.FindPlayer(Results[0].name);
 
-                
 
-                if (res.Count == 1)
-                {
-                    var ply = res[0];
 
-                    args.Player.SendSuccessMessage("UserID: {0}, Registered Name: {1}",
-                    Results[0].UserID, Results[0].name);
+				if (res.Count == 1)
+				{
+					var ply = res[0];
 
-                    if (esPlayers[ply.Index].HasNickName)
-                        args.Player.SendSuccessMessage("Nickname: {0}{1}", Config.PrefixNicknamesWith,
-                            esPlayers[ply.Index].Nickname);
+					args.Player.SendSuccessMessage("UserID: {0}, Registered Name: {1}",
+					Results[0].UserID, Results[0].name);
 
-                    args.Player.SendSuccessMessage("IP: {0}", Results[0].IP);
-                }
+					if (esPlayers[ply.Index].HasNickName)
+						args.Player.SendSuccessMessage("Nickname: {0}{1}", Config.PrefixNicknamesWith,
+							esPlayers[ply.Index].Nickname);
 
-                else
-                {
-                    args.Player.SendSuccessMessage("Registered Name: {0}", Results[0].name);
-                    args.Player.SendSuccessMessage("IP: {0}", Results[0].IP);                    
-                }
-				
+					args.Player.SendSuccessMessage("IP: {0}", Results[0].IP);
+				}
+
+				else
+				{
+					args.Player.SendSuccessMessage("Registered Name: {0}", Results[0].name);
+					args.Player.SendSuccessMessage("IP: {0}", Results[0].IP);
+				}
+
 			}
 			else
 			{
 				args.Player.SendWarningMessage("Matches: ({0}):", Results.Count);
 
-                Results.ForEach(r =>
-                {
-                    TShock.Players.ForEach(pl =>
-                    {
-                        if (r.name == pl.Name)
-                        {
-                            args.Player.SendInfoMessage("Online matches:");
-                            args.Player.SendSuccessMessage("({0}){1} (IP:{3})", pl.User.ID, pl.Name, pl.IP);
-                            Results.RemoveAll(result => result == r);
-                        }
-                    });
+				Results.ForEach(r =>
+				{
+					TShock.Players.ForEach(pl =>
+					{
+						if (r.name == pl.Name)
+						{
+							args.Player.SendInfoMessage("Online matches:");
+							args.Player.SendSuccessMessage("({0}){1} (IP:{3})", pl.User.ID, pl.Name, pl.IP);
+							Results.RemoveAll(result => result == r);
+						}
+					});
 
-                    args.Player.SendInfoMessage("Offline matches:");
-                    args.Player.SendSuccessMessage("{1} (IP:{3})", r.name, r.IP);
-                });
+					args.Player.SendInfoMessage("Offline matches:");
+					args.Player.SendSuccessMessage("{1} (IP:{3})", r.name, r.IP);
+				});
 			}
 		}
 		#endregion
 	}
 
-    public class User_Obj
-    {
-        public int UserID;
-        public string name;
-        public string IP;
+	public class User_Obj
+	{
+		public int UserID;
+		public string name;
+		public string IP;
 
-        public User_Obj(int u, string n, string i)
-        {
-            UserID = u;
-            name = n;
-            IP = i;
-        }
-    }
+		public User_Obj(int u, string n, string i)
+		{
+			UserID = u;
+			name = n;
+			IP = i;
+		}
+	}
 }

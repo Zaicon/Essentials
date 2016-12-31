@@ -7,7 +7,7 @@ using TShockAPI;
 
 namespace Essentials
 {
-	public static class esUtils
+	public static class EsUtils
 	{
 		/* Search IDs */
 		public static List<object> ItemIdSearch(string search)
@@ -88,8 +88,7 @@ namespace Essentials
 			{
 				if (p.StartsWith("essentials.home.set.") && p != "essentials.home.set." && !ply.Group.negatedpermissions.Contains(p))
 				{
-					int m = 0;
-					if (int.TryParse(p.Remove(0, 20), out m))
+					if (int.TryParse(p.Remove(0, 20), out int m))
 						maxHomes.Add(m);
 				}
 			}
