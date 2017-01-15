@@ -504,7 +504,7 @@ namespace Essentials
 		{
 			if (!args.Player.RealPlayer)
 				return;
-			NetMessage.SendPlayerHurt(26, PlayerDeathReason.ByCustomReason(" decided it wasnt worth living."), 15000, 1, false, false, 0);
+			NetMessage.SendPlayerHurt(args.Player.Index, PlayerDeathReason.ByCustomReason(" decided it wasnt worth living."), 15000, 1, false, false, 0);
 		}
 		#endregion
 
