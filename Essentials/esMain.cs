@@ -20,7 +20,7 @@ using TShockAPI.Hooks;
 
 namespace Essentials
 {
-	[ApiVersion(2, 0)]
+	[ApiVersion(2, 1)]
 	public class Essentials : TerrariaPlugin
 	{
 		public override string Name { get { return "Essentials"; } }
@@ -388,10 +388,10 @@ namespace Essentials
 				{
 					if (item == null || item.stack == 0) continue;
 					int amtToAdd = item.maxStack - item.stack;
-					if (item.stack > 0 && amtToAdd > 0 && !item.name.ToLower().Contains("coin"))
+					if (item.stack > 0 && amtToAdd > 0 && !item.Name.ToLower().Contains("coin"))
 					{
 						full = false;
-						args.Player.GiveItem(item.type, item.name, item.width, item.height, amtToAdd);
+						args.Player.GiveItem(item.type, item.Name, item.width, item.height, amtToAdd);
 					}
 					i++;
 				}
@@ -405,11 +405,11 @@ namespace Essentials
 				Item holding = args.Player.TPlayer.inventory[args.TPlayer.selectedItem];
 				int amtToAdd = holding.maxStack - holding.stack;
 				if (holding.stack > 0 && amtToAdd > 0)
-					args.Player.GiveItem(holding.type, holding.name, holding.width, holding.height, amtToAdd);
+					args.Player.GiveItem(holding.type, holding.Name, holding.width, holding.height, amtToAdd);
 				if (amtToAdd == 0)
-					args.Player.SendErrorMessage("Your {0} is already full.", holding.name);
+					args.Player.SendErrorMessage("Your {0} is already full.", holding.Name);
 				else
-					args.Player.SendSuccessMessage("Filled up your {0}.", holding.name);
+					args.Player.SendSuccessMessage("Filled up your {0}.", holding.Name);
 			}
 		}
 		#endregion
@@ -469,7 +469,6 @@ namespace Essentials
 			}
 		}
 		#endregion
-
 		#region HelpOp
 		private void CMDhelpop(CommandArgs args)
 		{
@@ -688,13 +687,13 @@ namespace Essentials
 					{
 						var item = new Item();
 						item.netDefaults(i);
-						if (item.name.ToLower().Contains(match.Groups[2].Value.ToLower()))
-							items.Add(String.Format("{0} (ID: {1})", item.name, i));
+						if (item.Name.ToLower().Contains(match.Groups[2].Value.ToLower()))
+							items.Add(String.Format("{0} (ID: {1})", item.Name, i));
 					}
-					for (int i = 0; i < Main.itemName.Length; i++)
+					for (int i = 0; i < Main.item.Length; i++)
 					{
-						if (Main.itemName[i].ToLower().Contains(match.Groups[2].Value.ToLower()))
-							items.Add(String.Format("{0} (ID: {1})", Main.itemName[i], i));
+						if (Lang.GetItemNameValue(i).ToLower().Contains(match.Groups[2].Value.ToLower()))
+							items.Add(String.Format("{0} (ID: {1})", Lang.GetItemNameValue(i), i));
 					}
 
 					PaginationTools.SendPage(args.Player, page, items,
@@ -713,14 +712,14 @@ namespace Essentials
 					for (int i = -65; i < 0; i++)
 					{
 						var npc = new NPC();
-						npc.netDefaults(i);
-						if (npc.name.ToLower().Contains(match.Groups[2].Value.ToLower()))
-							npcs.Add(String.Format("{0} (ID: {1})", npc.name, i));
+						npc.SetDefaults(i);
+						if (Lang.GetNPCNameValue(i).ToLower().Contains(match.Groups[2].Value.ToLower()))
+							npcs.Add(String.Format("{0} (ID: {1})", Lang.GetNPCNameValue(i), i));
 					}
-					for (int i = 0; i < Main.npcName.Length; i++)
+					for (int i = 0; i < Main.npc.Length; i++)
 					{
-						if (Main.npcName[i].ToLower().Contains(match.Groups[2].Value.ToLower()))
-							npcs.Add(String.Format("{0} (ID: {1})", Main.npcName[i], i));
+						if (Lang.GetNPCNameValue(i).ToLower().Contains(match.Groups[2].Value.ToLower()))
+							npcs.Add(String.Format("{0} (ID: {1})", Lang.GetNPCNameValue(i), i));
 					}
 
 					PaginationTools.SendPage(args.Player, page, npcs,
@@ -791,12 +790,12 @@ namespace Essentials
 					return;
 				case "buff":
 					var buffs = new List<string>();
-					for (int i = 0; i < Main.buffName.Length; i++)
+					for (int i = 0; i < Lang._buffNameCache.Length; i++)
 					{
-						if (Main.buffName[i] == null)
+						if (Lang.GetBuffName(i) == null)
 							continue;
-						if (Main.buffName[i].ToLower().Contains(match.Groups[2].Value.ToLower()))
-							buffs.Add($"{Main.buffName[i]} (ID: {i})");
+						if (Lang.GetBuffName(i).ToLower().Contains(match.Groups[2].Value.ToLower()))
+							buffs.Add($"{Lang.GetBuffName(i)} (ID: {i})");
 					}
 					PaginationTools.SendPage(args.Player, page, buffs,
 						new PaginationTools.Settings
@@ -809,12 +808,12 @@ namespace Essentials
 				case "projectile":
 				case "proj":
 					var projs = new List<string>();
-					for (int i = 0; i < Main.projName.Length; i++)
+					for (int i = 0; i < Lang._projectileNameCache.Length; i++)
 					{
-						if (Main.projName[i] == null)
+						if (Lang.GetProjectileName(i) == null)
 							continue;
-						if (Main.projName[i].ToLower().Contains(match.Groups[2].Value.ToLower()))
-							projs.Add($"{Main.projName[i]} (ID: {i})");
+						if (Lang.GetProjectileName(i).Value.ToLower().Contains(match.Groups[2].Value.ToLower()))
+							projs.Add($"{Lang.GetProjectileName(i)} (ID: {i})");
 					}
 					PaginationTools.SendPage(args.Player, page, projs,
 						new PaginationTools.Settings
@@ -830,8 +829,8 @@ namespace Essentials
 					{
 						if (Lang.prefix[i] == null)
 							continue;
-						if (Lang.prefix[i].ToLower().Contains(match.Groups[2].Value.ToLower()))
-							prefixes.Add($"{Lang.prefix[i]} (ID: {i})");
+						if (Lang.prefix[i].Value.ToLower().Contains(match.Groups[2].Value.ToLower()))
+							prefixes.Add($"{Lang.prefix[i].Value} (ID: {i})");
 					}
 					PaginationTools.SendPage(args.Player, page, prefixes,
 						new PaginationTools.Settings
