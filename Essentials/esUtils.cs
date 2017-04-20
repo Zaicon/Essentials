@@ -19,7 +19,7 @@ namespace Essentials
 				{
 					Item item = new Item();
 					item.netDefaults(i);
-					if (item.name.ToLower().Contains(search.ToLower()))
+					if (item.Name.ToLower().Contains(search.ToLower()))
 						found.Add(item);
 				}
 				return found;
@@ -34,8 +34,8 @@ namespace Essentials
 				for (int i = -65; i < Main.maxNPCTypes; i++)
 				{
 					NPC npc = new NPC();
-					npc.netDefaults(i);
-					if (npc.name.ToLower().Contains(search.ToLower()))
+					npc.SetDefaults(i);
+					if (Lang.GetNPCNameValue(i).ToLower().Contains(search.ToLower()))
 						found.Add(npc);
 				}
 				return found;
@@ -56,9 +56,9 @@ namespace Essentials
 					if (sb.Length != 0)
 						sb.Append(" | ");
 					if (Results[j] is Item)
-						sb.Append(((Item)Results[j]).netID).Append(": ").Append(((Item)Results[j]).name);
+						sb.Append(((Item)Results[j]).netID).Append(": ").Append(((Item)Results[j]).Name);
 					else if (Results[j] is NPC)
-						sb.Append(((NPC)Results[j]).netID).Append(": ").Append(((NPC)Results[j]).name);
+						sb.Append(((NPC)Results[j]).netID).Append(": ").Append(Lang.GetNPCNameValue(((NPC)Results[j]).netID));
 					if (j == Results.Count - 1)
 					{
 						Player.SendSuccessMessage(sb.ToString());
