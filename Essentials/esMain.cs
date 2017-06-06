@@ -503,7 +503,7 @@ namespace Essentials
 		{
 			if (!args.Player.RealPlayer)
 				return;
-			NetMessage.SendPlayerHurt(args.Player.Index, PlayerDeathReason.ByCustomReason(" decided it wasnt worth living."), 15000, 1, false, false, 0);
+			NetMessage.SendPlayerHurt(args.Player.Index, PlayerDeathReason.ByCustomReason($"{args.Player.Name} decided it wasnt worth living."), 15000, 1, false, false, 0);
 		}
 		#endregion
 
@@ -1315,7 +1315,7 @@ namespace Essentials
 
 			var Ply = PlayersFound[0];
 			args.Parameters.RemoveAt(0); //remove player name
-			string reason = " " + string.Join(" ", args.Parameters);
+			string reason = Ply.Name +  " " + string.Join(" ", args.Parameters);
 
 			NetMessage.SendPlayerHurt(Ply.Index, PlayerDeathReason.ByCustomReason(reason), 15000, 1, false, false, 0);
 

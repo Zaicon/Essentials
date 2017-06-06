@@ -1,9 +1,22 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.26014.0
+VisualStudioVersion = 15.0.26430.12
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Essentials", "Essentials\Essentials.csproj", "{85F20ADC-C2D1-416D-B7FF-9433C75A8F01}"
+EndProject
+Project("{911E67C6-3D85-4FCE-B560-20A9C3E3FF48}") = "TerrariaServer", "..\..\..\Desktop\TShock 4.3.24\TerrariaServer.exe", "{173D9CFD-1598-49BA-8694-D35BB307DD24}"
+	ProjectSection(DebuggerProjectSystem) = preProject
+		PortSupplier = 00000000-0000-0000-0000-000000000000
+		Executable = C:\Users\kzaic\Desktop\TShock 4.3.24\TerrariaServer.exe
+		RemoteMachine = CLAY-DESKTOP
+		StartingDirectory = C:\Users\kzaic\Desktop\TShock 4.3.24
+		Environment = Default
+		LaunchingEngine = 00000000-0000-0000-0000-000000000000
+		UseLegacyDebugEngines = No
+		LaunchSQLEngine = No
+		AttachLaunchAction = No
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +34,10 @@ Global
 		{85F20ADC-C2D1-416D-B7FF-9433C75A8F01}.Release|Any CPU.Build.0 = Release|Any CPU
 		{85F20ADC-C2D1-416D-B7FF-9433C75A8F01}.Release|x86.ActiveCfg = Release|Any CPU
 		{85F20ADC-C2D1-416D-B7FF-9433C75A8F01}.Release|x86.Build.0 = Release|Any CPU
+		{173D9CFD-1598-49BA-8694-D35BB307DD24}.Debug|Any CPU.ActiveCfg = Release|x86
+		{173D9CFD-1598-49BA-8694-D35BB307DD24}.Debug|x86.ActiveCfg = Release|x86
+		{173D9CFD-1598-49BA-8694-D35BB307DD24}.Release|Any CPU.ActiveCfg = Release|x86
+		{173D9CFD-1598-49BA-8694-D35BB307DD24}.Release|x86.ActiveCfg = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
