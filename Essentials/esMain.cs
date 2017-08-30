@@ -690,7 +690,7 @@ namespace Essentials
 						if (item.Name.ToLower().Contains(match.Groups[2].Value.ToLower()))
 							items.Add(String.Format("{0} (ID: {1})", item.Name, i));
 					}
-					for (int i = 0; i < Main.item.Length; i++)
+					for (int i = 0; i < Main.maxItemTypes; i++)
 					{
 						if (Lang.GetItemNameValue(i).ToLower().Contains(match.Groups[2].Value.ToLower()))
 							items.Add(String.Format("{0} (ID: {1})", Lang.GetItemNameValue(i), i));
@@ -708,15 +708,8 @@ namespace Essentials
 				#region NPC
 				case "npc":
 					var npcs = new List<string>();
-
-					for (int i = -65; i < 0; i++)
-					{
-						var npc = new NPC();
-						npc.SetDefaults(i);
-						if (Lang.GetNPCNameValue(i).ToLower().Contains(match.Groups[2].Value.ToLower()))
-							npcs.Add(String.Format("{0} (ID: {1})", Lang.GetNPCNameValue(i), i));
-					}
-					for (int i = 0; i < Main.npc.Length; i++)
+					
+					for (int i = -65; i < Main.maxNPCTypes; i++)
 					{
 						if (Lang.GetNPCNameValue(i).ToLower().Contains(match.Groups[2].Value.ToLower()))
 							npcs.Add(String.Format("{0} (ID: {1})", Lang.GetNPCNameValue(i), i));
@@ -790,7 +783,7 @@ namespace Essentials
 					return;
 				case "buff":
 					var buffs = new List<string>();
-					for (int i = 0; i < Lang._buffNameCache.Length; i++)
+					for (int i = 0; i < Main.maxBuffTypes; i++)
 					{
 						if (Lang.GetBuffName(i) == null)
 							continue;
@@ -808,7 +801,7 @@ namespace Essentials
 				case "projectile":
 				case "proj":
 					var projs = new List<string>();
-					for (int i = 0; i < Lang._projectileNameCache.Length; i++)
+					for (int i = 0; i < Main.maxProjectileTypes; i++)
 					{
 						if (Lang.GetProjectileName(i) == null)
 							continue;
